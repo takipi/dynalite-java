@@ -3,7 +3,11 @@ package com.takipi.oss.dynajava;
 import java.io.File;
 
 public class DynaliteJavaConfig
-{	
+{
+	public static final String NODE_VERSION = "0.12";
+	public static final String DYNALITE_MAIN = "cli.js";
+	public static final String NODE_MODULES = "node_modules";
+	
 	private int port;
 	private String jdbcEndpoint;
 	private String user;
@@ -17,17 +21,6 @@ public class DynaliteJavaConfig
 		this.user = user;
 		this.password = password;
 		this.dynaliteScriptDir = dynaliteScriptDir;
-	}
-	
-	public void init()
-	{
-		/*
-		port = 4000;
-		jdbcEndpoint = "jdbc:mysql://takipidb2.cvdgmg2unhmu.us-east-1.rds.amazonaws.com/mynalite?createDatabaseIfNotExist=true&useLegacyDatetimeCode=false";
-		user = "root";
-		password = "RdsBuddy1";
-		dynaliteScriptDir = new File("/Users/amithurvitz/sparktale/git/takipi/dynalite");
-		*/
 	}
 	
 	public DynaliteJavaConfig()

@@ -9,10 +9,6 @@ import io.apigee.trireme.core.ScriptStatus;
 
 public class DynaliteJavaServer
 {	
-	private static final String NODE_VERSION = "0.12";
-	private static final String DYNALITE_MAIN = "cli.js";
-	private static final String NODE_MODULES = "node_modules";
-	
 	private  DynaliteJavaConfig config;
 	
 	public DynaliteJavaServer(DynaliteJavaConfig config)
@@ -27,14 +23,14 @@ public class DynaliteJavaServer
 		File dynaliteScriptFile = handleDynaliteScriptFile();
 		
 		NodeEnvironment env = new NodeEnvironment();
-		NodeScript script = env.createScript(DYNALITE_MAIN,
+		NodeScript script = env.createScript(DynaliteJavaConfig.DYNALITE_MAIN,
 				dynaliteScriptFile, new String[] {
 						"--port", Integer.toString(config.getPort()),
 						"--jdbc", config.getJdbcEndpoint(),
 						"--jdbcUser", config.getUser(),
 						"--jdbcPassword", config.getPassword() });
 		
-		script.setNodeVersion(NODE_VERSION);
+		script.setNodeVersion(DynaliteJavaConfig.NODE_VERSION);
 		ScriptStatus status = script.execute().get();
 		
 		if (!status.isOk())
@@ -52,14 +48,14 @@ public class DynaliteJavaServer
 					"Could find dynalite dev location in expected directory: " + config.getDynaliteScriptDir().getAbsolutePath());
 		}
 		
-		File devNodeModules = new File(config.getDynaliteScriptDir(), NODE_MODULES);
+		File devNodeModules = new File(config.getDynaliteScriptDir(), DynaliteJavaConfig.NODE_MODULES);
 		
 		if (!devNodeModules.exists())
 		{
 			throw new IllegalStateException("You must run 'npm install' for: " + config.getDynaliteScriptDir().getAbsolutePath());
 		}
 		
-		return new File(config.getDynaliteScriptDir(), DYNALITE_MAIN);
+		return new File(config.getDynaliteScriptDir(), DynaliteJavaConfig.DYNALITE_MAIN);
 	}
 	
 	private String handleJDBCEndpoint() throws Exception

@@ -108,8 +108,6 @@ class DynaliteJavaMain
 		int port;
 		DynaliteJavaConfig config = new DynaliteJavaConfig();
 		
-		config.init();
-		
 		if (cmdLine.hasOption(PORT_OPTION_STR))
 		{
 			port = Integer.parseInt(cmdLine.getOptionValue(PORT_OPTION_STR));
@@ -171,7 +169,7 @@ class DynaliteJavaMain
 	
 	private boolean isValidDynaliteScriptDir(String dynaliteScriptDir)
 	{
-		return Files.exists(Paths.get(dynaliteScriptDir + "/cli.js"));
+		return Files.exists(Paths.get(dynaliteScriptDir + "/" + DynaliteJavaConfig.DYNALITE_MAIN));
 	}
 	
 	private boolean isValidJdbcEndpoint(String jdbcEndpoint)
@@ -224,7 +222,7 @@ class DynaliteJavaMain
 		final Option dynaliteScriptDirOption = Option.builder(DYNALITE_SCRIPT_DIR_OPTION_STR)
 				.required()
 				.hasArg(true)
-				.desc("Dynalite script directory (verify 'cli.js' exists under this directory)")
+				.desc("Dynalite script directory (verify '" + DynaliteJavaConfig.DYNALITE_MAIN + "' exists under this directory)")
 				.build();
 		
 		final Options options = new Options();
