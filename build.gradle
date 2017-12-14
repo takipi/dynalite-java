@@ -58,5 +58,24 @@ fatJar {
   exclude 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.SF'
 }
 
-build.dependsOn(fatJar)
+task putDynaZipInResources() << {
+	if (rootProject.hasProperty("zipFile")) {
+		def resourcesDir = sourceSets.main.resources.srcDirs[0]
+		
+		println "Copy $zipFile to $resourcesDir"
+		
+		ant.copy(file: zipFile, tofile:"$resourcesDir/dynalite.zip", overwrite:true)
+	}
+}
+
+task copyJar(dependsOn: fatJar) << {
+        if (rootProject.hasProperty("jarTargetFile")) {
+                println "Copying $jar.archivePath to $jarTargetFile"
+
+                ant.copy(file:jar.archivePath, tofile:jarTargetFile)
+        }
+}
+
+processResources.dependsOn(putDynaZipInResources)
+build.dependsOn(copyJar)
 
