@@ -8,8 +8,8 @@ import io.apigee.trireme.core.NodeScript;
 import io.apigee.trireme.core.ScriptStatus;
 
 public class DynaliteJavaServer
-{	
-	private  DynaliteJavaConfig config;
+{
+	private DynaliteJavaConfig config;
 	
 	public DynaliteJavaServer(DynaliteJavaConfig config)
 	{
@@ -42,20 +42,22 @@ public class DynaliteJavaServer
 	
 	private File handleDynaliteScriptFile()
 	{
-		if (!config.getDynaliteScriptDir().exists())
+		if (!new File(config.getDynaliteScriptDirName()).exists())
 		{
 			throw new IllegalStateException(
-					"Could find dynalite dev location in expected directory: " + config.getDynaliteScriptDir().getAbsolutePath());
+					"Could find dynalite dev location in expected directory: " +
+											config.getDynaliteScriptDir().getAbsolutePath());
 		}
 		
-		File devNodeModules = new File(config.getDynaliteScriptDir(), DynaliteJavaConfig.NODE_MODULES);
+		File devNodeModules = new File(config.getDynaliteScriptDirName(), DynaliteJavaConfig.NODE_MODULES);
 		
 		if (!devNodeModules.exists())
 		{
-			throw new IllegalStateException("You must run 'npm install' for: " + config.getDynaliteScriptDir().getAbsolutePath());
+			throw new IllegalStateException(
+					"You must run 'npm install' for: " + config.getDynaliteScriptDir().getAbsolutePath());
 		}
 		
-		return new File(config.getDynaliteScriptDir(), DynaliteJavaConfig.DYNALITE_MAIN);
+		return new File(config.getDynaliteScriptDirName(), DynaliteJavaConfig.DYNALITE_MAIN);
 	}
 	
 	private String handleJDBCEndpoint() throws Exception

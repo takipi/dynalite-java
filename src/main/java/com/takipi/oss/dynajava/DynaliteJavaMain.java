@@ -2,6 +2,7 @@
 package com.takipi.oss.dynajava;
 
 import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -43,6 +44,8 @@ class DynaliteJavaMain
 			return;
 		}
 		
+		extractDynaliteScriptZip(config.getDynaliteScriptDirName());
+		
 		DynaliteJavaServer dynaliteJavaServer = new DynaliteJavaServer(config);
 		
 		try
@@ -55,6 +58,12 @@ class DynaliteJavaMain
 		}
 	}
 	
+	private boolean extractDynaliteScriptZip(String dynaliteScriptDest)
+	{
+		InputStream dynaZipStream = this.getClass().getResourceAsStream(DynaliteJavaConfig.DYNALITE_SCRIPT_ZIP_PATH);
+		return Utils.unzip(dynaZipStream, dynaliteScriptDest);
+	}
+
 	private DynaliteJavaConfig parseCmdlineOptions(final String[] args)
 	{
 		DynaliteJavaConfig config = null;
@@ -152,6 +161,8 @@ class DynaliteJavaMain
 		if (cmdLine.hasOption(DYNALITE_SCRIPT_DIR_OPTION_STR))
 		{
 			String dynaliteScriptDir = cmdLine.getOptionValue(DYNALITE_SCRIPT_DIR_OPTION_STR);
+			config.setDynaliteScriptDirName(dynaliteScriptDir);
+			/*
 			if (isValidDynaliteScriptDir(dynaliteScriptDir))
 			{
 				config.setDynaliteScriptDir(new File(dynaliteScriptDir));
@@ -162,6 +173,7 @@ class DynaliteJavaMain
 				
 				return null;
 			}
+			*/
 		}
 		
 		return config;

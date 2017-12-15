@@ -7,13 +7,25 @@ public class DynaliteJavaConfig
 	public static final String NODE_VERSION = "0.12";
 	public static final String DYNALITE_MAIN = "cli.js";
 	public static final String NODE_MODULES = "node_modules";
+	public static final String DYNALITE_SCRIPT_ZIP_PATH = "/dynalite.zip";
 	
 	private int port;
 	private String jdbcEndpoint;
 	private String user;
 	private String password;
 	private File dynaliteScriptDir;
+	private String dynaliteScriptDirName;
 	
+	public String getDynaliteScriptDirName()
+	{
+		return dynaliteScriptDirName;
+	}
+
+	public void setDynaliteScriptDirName(String dynaliteScriptDirName)
+	{
+		this.dynaliteScriptDirName = dynaliteScriptDirName;
+	}
+
 	public DynaliteJavaConfig(int port, String jdbcEndpoint, String user, String password, File dynaliteScriptDir)
 	{
 		this.port = port;
