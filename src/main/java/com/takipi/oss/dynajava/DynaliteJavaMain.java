@@ -44,7 +44,7 @@ class DynaliteJavaMain
 			return;
 		}
 		
-		extractDynaliteScriptZip(config.getDynaliteScriptDirName());
+		extractDynaliteScriptZip(config.getDynaliteScriptDir());
 		
 		DynaliteJavaServer dynaliteJavaServer = new DynaliteJavaServer(config);
 		
@@ -161,27 +161,10 @@ class DynaliteJavaMain
 		if (cmdLine.hasOption(DYNALITE_SCRIPT_DIR_OPTION_STR))
 		{
 			String dynaliteScriptDir = cmdLine.getOptionValue(DYNALITE_SCRIPT_DIR_OPTION_STR);
-			config.setDynaliteScriptDirName(dynaliteScriptDir);
-			/*
-			if (isValidDynaliteScriptDir(dynaliteScriptDir))
-			{
-				config.setDynaliteScriptDir(new File(dynaliteScriptDir));
-			}
-			else
-			{
-				logger.error("Not a valid dynaliteScriptDir: " + cmdLine.getOptionValue(DYNALITE_SCRIPT_DIR_OPTION_STR));
-				
-				return null;
-			}
-			*/
+			config.setDynaliteScriptDir(dynaliteScriptDir);
 		}
 		
 		return config;
-	}
-	
-	private boolean isValidDynaliteScriptDir(String dynaliteScriptDir)
-	{
-		return Files.exists(Paths.get(dynaliteScriptDir + "/" + DynaliteJavaConfig.DYNALITE_MAIN));
 	}
 	
 	private boolean isValidJdbcEndpoint(String jdbcEndpoint)

@@ -42,22 +42,23 @@ public class DynaliteJavaServer
 	
 	private File handleDynaliteScriptFile()
 	{
-		if (!new File(config.getDynaliteScriptDirName()).exists())
+		File scriptDir = new File(config.getDynaliteScriptDir());
+		if (!scriptDir.exists())
 		{
 			throw new IllegalStateException(
 					"Could find dynalite dev location in expected directory: " +
-											config.getDynaliteScriptDir().getAbsolutePath());
+											scriptDir.getAbsolutePath());
 		}
 		
-		File devNodeModules = new File(config.getDynaliteScriptDirName(), DynaliteJavaConfig.NODE_MODULES);
+		File devNodeModules = new File(config.getDynaliteScriptDir(), DynaliteJavaConfig.NODE_MODULES);
 		
 		if (!devNodeModules.exists())
 		{
 			throw new IllegalStateException(
-					"You must run 'npm install' for: " + config.getDynaliteScriptDir().getAbsolutePath());
+					"You must run 'npm install' for: " + scriptDir.getAbsolutePath());
 		}
 		
-		return new File(config.getDynaliteScriptDirName(), DynaliteJavaConfig.DYNALITE_MAIN);
+		return new File(scriptDir, DynaliteJavaConfig.DYNALITE_MAIN);
 	}
 	
 	private String handleJDBCEndpoint() throws Exception

@@ -13,20 +13,9 @@ public class DynaliteJavaConfig
 	private String jdbcEndpoint;
 	private String user;
 	private String password;
-	private File dynaliteScriptDir;
-	private String dynaliteScriptDirName;
-	
-	public String getDynaliteScriptDirName()
-	{
-		return dynaliteScriptDirName;
-	}
+	private String dynaliteScriptDir;
 
-	public void setDynaliteScriptDirName(String dynaliteScriptDirName)
-	{
-		this.dynaliteScriptDirName = dynaliteScriptDirName;
-	}
-
-	public DynaliteJavaConfig(int port, String jdbcEndpoint, String user, String password, File dynaliteScriptDir)
+	public DynaliteJavaConfig(int port, String jdbcEndpoint, String user, String password, String dynaliteScriptDir)
 	{
 		this.port = port;
 		this.jdbcEndpoint = jdbcEndpoint;
@@ -60,10 +49,9 @@ public class DynaliteJavaConfig
 		// TODO Auto-generated method stub
 		return password;
 	}
-
-	public File getDynaliteScriptDir()
+	
+	public String getDynaliteScriptDir()
 	{
-		// TODO Auto-generated method stub
 		return dynaliteScriptDir;
 	}
 	
@@ -87,7 +75,7 @@ public class DynaliteJavaConfig
 		this.password = password;
 	}
 
-	public void setDynaliteScriptDir(File dynaliteScriptDir)
+	public void setDynaliteScriptDir(String dynaliteScriptDir)
 	{
 		this.dynaliteScriptDir = dynaliteScriptDir;
 	}
