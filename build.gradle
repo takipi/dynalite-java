@@ -26,27 +26,15 @@ repositories {
 
 dependencies {
 	compile(
-		'commons-cli:commons-cli:default',
-		"io.apigee.trireme:trireme-node12src:default",
-		"io.apigee.trireme:trireme-core:default",
-		"io.apigee.trireme:trireme-kernel:default",
-		"io.apigee.trireme:trireme-jar:default",
+		'commons-cli:commons-cli:1.4',
+		"io.apigee.trireme:trireme-node12src:0.9.0",
+		"io.apigee.trireme:trireme-core:0.9.0",
+		"io.apigee.trireme:trireme-kernel:0.9.0",
+		"io.apigee.trireme:trireme-jar:0.9.0",
 		
-		"com.h2database:h2:default",
-		"mysql:mysql-connector-java:default",
+		"com.h2database:h2:1.4.196",
+		"mysql:mysql-connector-java:6.0.6",
 	)
-}
-
-configurations.all {
-	resolutionStrategy.eachDependency {
-		dependency ->
-			dependency.useVersion(
-				versionResolver.resolve(
-					dependency.requested.group,
-					dependency.requested.name,
-					dependency.requested.version,
-					additionalVersionFilesPrefixes))
-	}
 }
 
 fatJar {
