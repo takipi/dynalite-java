@@ -1,7 +1,5 @@
 package com.takipi.oss.dynajava;
 
-import java.io.File;
-
 public class DynaliteJavaConfig
 {
 	public static final String NODE_VERSION = "0.12";

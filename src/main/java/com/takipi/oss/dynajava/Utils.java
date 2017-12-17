@@ -81,4 +81,18 @@ class Utils
 	    
 	    return true;
 	}
+	
+	public static File createTempDirectory(String prefix) throws IOException
+	{
+		final File temp;
+		
+		temp = File.createTempFile(prefix, Long.toString(System.nanoTime()));
+		
+		if ((!(temp.delete())) || (!(temp.mkdir())))
+		{
+			throw new IOException("Failed to create temp directory: " + temp.getAbsolutePath());
+		}
+		
+		return (temp);
+	}
 }

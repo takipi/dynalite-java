@@ -2,6 +2,7 @@
 package com.takipi.oss.dynajava;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -163,6 +164,18 @@ class DynaliteJavaMain
 			String dynaliteScriptDir = cmdLine.getOptionValue(DYNALITE_SCRIPT_DIR_OPTION_STR);
 			config.setDynaliteScriptDir(dynaliteScriptDir);
 		}
+		else {
+			try
+			{
+				File tempFile = Utils.createTempDirectory(("dynajava"));
+				config.setDynaliteScriptDir(tempFile.getAbsolutePath());
+			} catch (IOException e)
+			{
+				logger.error(e.getMessage());
+				
+				return null;
+			}
+		}
 		
 		return config;
 	}
@@ -215,7 +228,7 @@ class DynaliteJavaMain
 				.desc("Backend database password")
 				.build();
 		final Option dynaliteScriptDirOption = Option.builder(DYNALITE_SCRIPT_DIR_OPTION_STR)
-				.required()
+				.required(false)
 				.hasArg(true)
 				.desc("Dynalite script directory (verify '" + DynaliteJavaConfig.DYNALITE_MAIN + "' exists under this directory)")
 				.build();
