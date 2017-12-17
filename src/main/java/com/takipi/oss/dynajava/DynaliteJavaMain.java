@@ -208,22 +208,22 @@ class DynaliteJavaMain
 	private Options createOptions()
 	{
 		final Option portOption = Option.builder(PORT_OPTION_STR)
-				.required()
+				.required(false)
 				.hasArg(true)
 				.desc("Dynalite listening port")
 				.build();
 		final Option jdbcEndpointOption = Option.builder(JDBC_ENDPOINT_OPTION_STR)
-				.required()
+				.required(false)
 				.hasArg(true)
 				.desc("JDBC URL for Dynalite backend storage")
 				.build();
 		final Option userOption = Option.builder(USER_OPTION_STR)
-				.required()
+				.required(false)
 				.hasArg(true)
 				.desc("Backend database user")
 				.build();
 		final Option passwordOption = Option.builder(PASSWORD_OPTION_STR)
-				.required()
+				.required(false)
 				.hasArg(true)
 				.desc("Backend database password")
 				.build();

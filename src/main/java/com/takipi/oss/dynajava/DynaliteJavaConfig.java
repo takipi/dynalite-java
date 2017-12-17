@@ -7,6 +7,9 @@ public class DynaliteJavaConfig
 	public static final String NODE_MODULES = "node_modules";
 	public static final String DYNALITE_SCRIPT_ZIP_PATH = "/dynalite.zip";
 	
+	public static final String DYNALITE_DEFAULT_JDBC_STR = "jdbc:h2:tcp://localhost:9999/dynalite;MODE=mysql;MVCC=true";
+	public static final int DYNALITE_DEFAULT_PORT = 4000;
+	
 	private int port;
 	private String jdbcEndpoint;
 	private String user;
@@ -24,6 +27,13 @@ public class DynaliteJavaConfig
 	
 	public DynaliteJavaConfig()
 	{
+		setDefault();
+	}
+
+	private void setDefault()
+	{
+		this.port = DYNALITE_DEFAULT_PORT;
+		this.jdbcEndpoint = DYNALITE_DEFAULT_JDBC_STR;
 	}
 
 	public int getPort()
