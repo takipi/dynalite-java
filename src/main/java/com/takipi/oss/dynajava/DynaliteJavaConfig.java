@@ -15,6 +15,7 @@ public class DynaliteJavaConfig
 	private String user;
 	private String password;
 	private String dynaliteScriptDir;
+	private String tempdir;
 
 	public DynaliteJavaConfig(int port, String jdbcEndpoint, String user, String password, String dynaliteScriptDir)
 	{
@@ -23,6 +24,7 @@ public class DynaliteJavaConfig
 		this.user = user;
 		this.password = password;
 		this.dynaliteScriptDir = dynaliteScriptDir;
+		this.tempdir = null;
 	}
 	
 	public DynaliteJavaConfig()
@@ -34,6 +36,7 @@ public class DynaliteJavaConfig
 	{
 		this.port = DYNALITE_DEFAULT_PORT;
 		this.jdbcEndpoint = DYNALITE_DEFAULT_JDBC_STR;
+		this.tempdir = null;
 	}
 
 	public int getPort()
@@ -48,13 +51,11 @@ public class DynaliteJavaConfig
 
 	public String getUser()
 	{
-		// TODO Auto-generated method stub
 		return user;
 	}
 
 	public String getPassword()
 	{
-		// TODO Auto-generated method stub
 		return password;
 	}
 	
@@ -87,5 +88,17 @@ public class DynaliteJavaConfig
 	{
 		this.dynaliteScriptDir = dynaliteScriptDir;
 	}
+
+	public void setTempdir(String tempdir)
+	{
+		this.tempdir = tempdir;
+	}
+
+	public String getTempdir()
+	{
+		return tempdir;
+	}
+
+
 	
 }

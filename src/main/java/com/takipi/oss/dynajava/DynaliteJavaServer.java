@@ -67,6 +67,7 @@ public class DynaliteJavaServer
 	private File handleDynaliteScriptFile()
 	{
 		File scriptDir = new File(config.getDynaliteScriptDir());
+		
 		if (!scriptDir.exists())
 		{
 			throw new IllegalStateException(

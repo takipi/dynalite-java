@@ -4,8 +4,6 @@ package com.takipi.oss.dynajava;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
 
 import org.apache.commons.cli.CommandLine;
@@ -26,6 +24,7 @@ class DynaliteJavaMain
 	public final static String USER_OPTION_STR = "user";
 	public final static String PASSWORD_OPTION_STR = "password";
 	public final static String DYNALITE_SCRIPT_DIR_OPTION_STR = "dynaliteScriptDir";
+	public final static String TEMPDIR_OPTION_STR = "tempdir";
 	
 	private final static Logger logger = LoggerFactory.getLogger(DynaliteJavaConfig.class.getName());
 	
@@ -45,7 +44,29 @@ class DynaliteJavaMain
 			return;
 		}
 		
-		extractDynaliteScriptZip(config.getDynaliteScriptDir());
+		if (! isDynaliteScriptValid(config.getDynaliteScriptDir()))
+		{
+			String targetDir = config.getTempdir();
+			
+			if (targetDir == null)
+			{
+				try
+				{
+					File tempFile = Utils.createTempDirectory(("dynalite"));
+					targetDir = tempFile.getAbsolutePath();
+				} catch (IOException e)
+				{
+					logger.error(e.getMessage());
+					logger.error("Cannot create scripts directory. Exiting");
+					
+					return;
+				}
+			}
+			
+			config.setDynaliteScriptDir(targetDir);
+			
+			extractDynaliteScriptZip(config.getDynaliteScriptDir());
+		}
 		
 		DynaliteJavaServer dynaliteJavaServer = new DynaliteJavaServer(config);
 		
@@ -57,6 +78,23 @@ class DynaliteJavaMain
 		{
 			logger.error(e.getMessage());
 		}
+	}
+	
+	private boolean isDynaliteScriptValid(String dirName)
+	{
+		if (dirName == null)
+		{
+			return false;
+		}
+		
+		File dir = new File(dirName);
+		
+		if (!dir.exists())
+		{
+			return false;
+		}
+		
+		return (new File(dirName + File.separator + "cli.js")).exists();
 	}
 	
 	private boolean extractDynaliteScriptZip(String dynaliteScriptDest)
@@ -159,22 +197,24 @@ class DynaliteJavaMain
 			config.setPassword(cmdLine.getOptionValue(PASSWORD_OPTION_STR));
 		}
 		
+		if (cmdLine.hasOption(TEMPDIR_OPTION_STR))
+		{
+			String tempdir = cmdLine.getOptionValue(TEMPDIR_OPTION_STR);
+			config.setTempdir(tempdir);
+		}
+		
 		if (cmdLine.hasOption(DYNALITE_SCRIPT_DIR_OPTION_STR))
 		{
 			String dynaliteScriptDir = cmdLine.getOptionValue(DYNALITE_SCRIPT_DIR_OPTION_STR);
-			config.setDynaliteScriptDir(dynaliteScriptDir);
-		}
-		else {
-			try
+			
+			if (! isDynaliteScriptValid(dynaliteScriptDir))
 			{
-				File tempFile = Utils.createTempDirectory(("dynajava"));
-				config.setDynaliteScriptDir(tempFile.getAbsolutePath());
-			} catch (IOException e)
-			{
-				logger.error(e.getMessage());
+				logger.error("Dynalite script directory is not valid");
 				
 				return null;
 			}
+			
+			config.setDynaliteScriptDir(dynaliteScriptDir);
 		}
 		
 		return config;
@@ -232,6 +272,11 @@ class DynaliteJavaMain
 				.hasArg(true)
 				.desc("Dynalite script directory (verify '" + DynaliteJavaConfig.DYNALITE_MAIN + "' exists under this directory)")
 				.build();
+		final Option tmpdirOption = Option.builder(TEMPDIR_OPTION_STR)
+				.required(false)
+				.hasArg(true)
+				.desc("Dynalite script directory (verify '" + DynaliteJavaConfig.DYNALITE_MAIN + "' exists under this directory)")
+				.build();
 		
 		final Options options = new Options();
 		options.addOption(portOption);
@@ -239,6 +284,7 @@ class DynaliteJavaMain
 		options.addOption(userOption);
 		options.addOption(passwordOption);
 		options.addOption(dynaliteScriptDirOption);
+		options.addOption(tmpdirOption);
 		
 		return options;
 	}
@@ -275,6 +321,11 @@ class DynaliteJavaMain
 				.hasArg(true)
 				.desc("Set dynaliteScriptDir")
 				.build();
+		final Option tmpdirOption = Option.builder(TEMPDIR_OPTION_STR)
+				.required(false)
+				.hasArg(true)
+				.desc("Dynalite script directory (verify '" + DynaliteJavaConfig.DYNALITE_MAIN + "' exists under this directory)")
+				.build();
 		
 		final Options options = new Options();
 		options.addOption(portOption);
@@ -283,6 +334,7 @@ class DynaliteJavaMain
 		options.addOption(passwordOption);
 		options.addOption(dynaliteScriptDirOption);
 		options.addOption(helpOption);
+		options.addOption(tmpdirOption);
 		
 		return options;
 	}
