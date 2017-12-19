@@ -95,4 +95,16 @@ class Utils
 		
 		return (temp);
 	}
+	
+	public static boolean createDirectory(String dirName)
+	{
+		File dir = new File(dirName);
+		
+		if (dir.exists())
+		{
+			return dir.isDirectory();
+		}
+		
+		return dir.mkdirs();
+	}
 }

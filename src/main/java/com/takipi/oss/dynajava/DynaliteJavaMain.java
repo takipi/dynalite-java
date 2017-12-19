@@ -65,6 +65,13 @@ class DynaliteJavaMain
 			
 			config.setDynaliteScriptDir(targetDir);
 			
+			if (!Utils.createDirectory(targetDir))
+			{
+				logger.error("Cannot create directory: {}", targetDir);
+				
+				return;
+			}
+			
 			extractDynaliteScriptZip(config.getDynaliteScriptDir());
 		}
 		
@@ -275,7 +282,7 @@ class DynaliteJavaMain
 		final Option tmpdirOption = Option.builder(TEMPDIR_OPTION_STR)
 				.required(false)
 				.hasArg(true)
-				.desc("Dynalite script directory (verify '" + DynaliteJavaConfig.DYNALITE_MAIN + "' exists under this directory)")
+				.desc("Temporary directory for Dynalite application")
 				.build();
 		
 		final Options options = new Options();
@@ -324,7 +331,7 @@ class DynaliteJavaMain
 		final Option tmpdirOption = Option.builder(TEMPDIR_OPTION_STR)
 				.required(false)
 				.hasArg(true)
-				.desc("Dynalite script directory (verify '" + DynaliteJavaConfig.DYNALITE_MAIN + "' exists under this directory)")
+				.desc("Temporary directory for Dynalite application")
 				.build();
 		
 		final Options options = new Options();
