@@ -13,6 +13,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +27,7 @@ class DynaliteJavaMain
 	public final static String DYNALITE_SCRIPT_DIR_OPTION_STR = "dynaliteScriptDir";
 	public final static String TEMPDIR_OPTION_STR = "tempdir";
 	
-	private final static Logger logger = LoggerFactory.getLogger(DynaliteJavaConfig.class.getName());
+	private final static Logger logger = LoggerFactory.getLogger(DynaliteJavaConfig.class);
 	
 	public static void main(String[] args) throws Exception
 	{
@@ -44,7 +45,7 @@ class DynaliteJavaMain
 			return;
 		}
 		
-		if (! isDynaliteScriptValid(config.getDynaliteScriptDir()))
+		if (!isDynaliteScriptValid(config.getDynaliteScriptDir()))
 		{
 			String targetDir = config.getTempdir();
 			
@@ -115,32 +116,29 @@ class DynaliteJavaMain
 		DynaliteJavaConfig config = null;
 		
 		Options options = createOptions();
-		Options helpOptions = createHelpOptions();
 		
 		CommandLine cmdLine = null;
 		
-		try {
-			cmdLine = parseOptions(helpOptions, args);
-		
-			if ((cmdLine == null) ||
-				(cmdLine.hasOption(HELP_OPTION_STR)))
-			{
-				printUsage(helpOptions, options);
-				
-				return null;
-			}
-		
+		try 
+		{
 			cmdLine = parseOptions(options, args);
 		
 			if (cmdLine == null)
 			{
 				return null;
 			}
+			
+			if (cmdLine.hasOption(HELP_OPTION_STR))
+			{
+				printUsage(options);
+				
+				return null;
+			}
 		}
 		catch (ParseException parseException)
 		{
 			logger.error("Unable to parse command-line arguments " +	Arrays.toString(args) + " due to: " + parseException);
-			printUsage(helpOptions, options);
+			printUsage(options);
 			
 			return null;
 		}
@@ -150,22 +148,29 @@ class DynaliteJavaMain
 		return config;
 	}
 	
-	private void printUsage(Options helpOptions, Options options)
+	private void printUsage(Options options)
 	{
 		HelpFormatter formatter = new HelpFormatter();
-		formatter.printHelp("java -jar " + this.getClass().getName(), options, true);
-		System.out.println("or");
-		System.out.println("  java -jar " + this.getClass().getName() + " -" + helpOptions.getOption("help").getOpt());
+		formatter.printHelp("java -jar <jar_file>", options, true);
 	}
 	
 	private DynaliteJavaConfig fillConfig(CommandLine cmdLine)
 	{
-		int port;
+		int port = -1;
 		DynaliteJavaConfig config = new DynaliteJavaConfig();
 		
 		if (cmdLine.hasOption(PORT_OPTION_STR))
 		{
-			port = Integer.parseInt(cmdLine.getOptionValue(PORT_OPTION_STR));
+			String portStr = cmdLine.getOptionValue(PORT_OPTION_STR);
+			
+			try 
+			{
+				port = Integer.parseInt(portStr);
+			} 
+			catch (Exception e) 
+			{
+				System.out.println("Error parsing port number: " + portStr);
+			}
 			
 			if (isValidPort(port))
 			{
@@ -182,6 +187,7 @@ class DynaliteJavaMain
 		if (cmdLine.hasOption(JDBC_ENDPOINT_OPTION_STR))
 		{
 			String jdbcEndpoint = cmdLine.getOptionValue(JDBC_ENDPOINT_OPTION_STR);
+			
 			if (isValidJdbcEndpoint(jdbcEndpoint))
 			{
 				config.setJdbcEndpoint(jdbcEndpoint);
@@ -214,7 +220,7 @@ class DynaliteJavaMain
 		{
 			String dynaliteScriptDir = cmdLine.getOptionValue(DYNALITE_SCRIPT_DIR_OPTION_STR);
 			
-			if (! isDynaliteScriptValid(dynaliteScriptDir))
+			if (!isDynaliteScriptValid(dynaliteScriptDir))
 			{
 				logger.error("Dynalite script directory is not valid");
 				
@@ -229,6 +235,11 @@ class DynaliteJavaMain
 	
 	private boolean isValidJdbcEndpoint(String jdbcEndpoint)
 	{
+		if (jdbcEndpoint == null)
+		{
+			return false;
+		}
+		
 		if ((jdbcEndpoint.startsWith("jdbc:h2:")) ||
 			(jdbcEndpoint.startsWith("jdbc:mysql:")))
 		{
@@ -244,9 +255,9 @@ class DynaliteJavaMain
 				(port <= 65535));
 	}
 	
-	private CommandLine parseOptions(Options options, final String[] args) throws ParseException
+	private CommandLine parseOptions(Options options, String[] args) throws ParseException
 	{
-		final CommandLineParser cmdLineParser = new DefaultParser();
+		CommandLineParser cmdLineParser = new DefaultParser();
 		CommandLine commandLine = cmdLineParser.parse(options, args);
 		
 		return commandLine;
@@ -254,96 +265,51 @@ class DynaliteJavaMain
 	
 	private Options createOptions()
 	{
-		final Option portOption = Option.builder(PORT_OPTION_STR)
-				.required(false)
-				.hasArg(true)
-				.desc("Dynalite listening port")
-				.build();
-		final Option jdbcEndpointOption = Option.builder(JDBC_ENDPOINT_OPTION_STR)
-				.required(false)
-				.hasArg(true)
-				.desc("JDBC URL for Dynalite backend storage")
-				.build();
-		final Option userOption = Option.builder(USER_OPTION_STR)
-				.required(false)
-				.hasArg(true)
-				.desc("Backend database user")
-				.build();
-		final Option passwordOption = Option.builder(PASSWORD_OPTION_STR)
-				.required(false)
-				.hasArg(true)
-				.desc("Backend database password")
-				.build();
-		final Option dynaliteScriptDirOption = Option.builder(DYNALITE_SCRIPT_DIR_OPTION_STR)
-				.required(false)
-				.hasArg(true)
-				.desc("Dynalite script directory (verify '" + DynaliteJavaConfig.DYNALITE_MAIN + "' exists under this directory)")
-				.build();
-		final Option tmpdirOption = Option.builder(TEMPDIR_OPTION_STR)
-				.required(false)
-				.hasArg(true)
-				.desc("Temporary directory for Dynalite application")
-				.build();
-		
-		final Options options = new Options();
-		options.addOption(portOption);
-		options.addOption(jdbcEndpointOption);
-		options.addOption(userOption);
-		options.addOption(passwordOption);
-		options.addOption(dynaliteScriptDirOption);
-		options.addOption(tmpdirOption);
-		
-		return options;
-	}
-	
-	private Options createHelpOptions()
-	{
-		final Option helpOption = Option.builder(HELP_OPTION_STR)
+		Option helpOption = Option.builder(HELP_OPTION_STR)
 				.required(false)
 				.hasArg(false)
 				.desc("Shows this message")
 				.build();
-		final Option portOption = Option.builder(PORT_OPTION_STR)
+		Option portOption = Option.builder(PORT_OPTION_STR)
 				.required(false)
 				.hasArg(true)
-				.desc("Set Listening port")
+				.desc("Dynalite listening port")
 				.build();
-		final Option jdbcEndpointOption = Option.builder(JDBC_ENDPOINT_OPTION_STR)
+		Option jdbcEndpointOption = Option.builder(JDBC_ENDPOINT_OPTION_STR)
 				.required(false)
 				.hasArg(true)
-				.desc("Set jdbcEndpoint")
+				.desc("JDBC URL for Dynalite backend storage")
 				.build();
-		final Option userOption = Option.builder(USER_OPTION_STR)
+		Option userOption = Option.builder(USER_OPTION_STR)
 				.required(false)
 				.hasArg(true)
-				.desc("Set user")
+				.desc("Backend database user")
 				.build();
-		final Option passwordOption = Option.builder(PASSWORD_OPTION_STR)
+		Option passwordOption = Option.builder(PASSWORD_OPTION_STR)
 				.required(false)
 				.hasArg(true)
-				.desc("Set password")
+				.desc("Backend database password")
 				.build();
-		final Option dynaliteScriptDirOption = Option.builder(DYNALITE_SCRIPT_DIR_OPTION_STR)
+		Option dynaliteScriptDirOption = Option.builder(DYNALITE_SCRIPT_DIR_OPTION_STR)
 				.required(false)
 				.hasArg(true)
-				.desc("Set dynaliteScriptDir")
+				.desc("Dynalite script directory (verify '" + DynaliteJavaConfig.DYNALITE_MAIN + "' exists under this directory)")
 				.build();
-		final Option tmpdirOption = Option.builder(TEMPDIR_OPTION_STR)
+		Option tmpdirOption = Option.builder(TEMPDIR_OPTION_STR)
 				.required(false)
 				.hasArg(true)
 				.desc("Temporary directory for Dynalite application")
 				.build();
 		
-		final Options options = new Options();
+		Options options = new Options();
+		options.addOption(helpOption);
 		options.addOption(portOption);
 		options.addOption(jdbcEndpointOption);
 		options.addOption(userOption);
 		options.addOption(passwordOption);
 		options.addOption(dynaliteScriptDirOption);
-		options.addOption(helpOption);
 		options.addOption(tmpdirOption);
 		
 		return options;
 	}
-	
 }

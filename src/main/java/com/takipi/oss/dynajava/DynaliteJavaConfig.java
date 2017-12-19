@@ -17,16 +17,6 @@ public class DynaliteJavaConfig
 	private String dynaliteScriptDir;
 	private String tempdir;
 
-	public DynaliteJavaConfig(int port, String jdbcEndpoint, String user, String password, String dynaliteScriptDir)
-	{
-		this.port = port;
-		this.jdbcEndpoint = jdbcEndpoint;
-		this.user = user;
-		this.password = password;
-		this.dynaliteScriptDir = dynaliteScriptDir;
-		this.tempdir = null;
-	}
-	
 	public DynaliteJavaConfig()
 	{
 		setDefault();
@@ -98,7 +88,4 @@ public class DynaliteJavaConfig
 	{
 		return tempdir;
 	}
-
-
-	
 }
