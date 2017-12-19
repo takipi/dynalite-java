@@ -1,19 +1,23 @@
 package com.takipi.oss.dynajava;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.util.zip.ZipException;
 
 class Utils
 {
+	private final static Logger logger = LoggerFactory.getLogger(Utils.class);
+	
 	private static File createFileEntry(ZipEntry ze, String dirName) throws IOException
 	{
-		File entry = null;
-		String fullPathName = dirName + File.separator + ze.getName();
-		entry = new File(fullPathName);
+		File entry = new File(dirName, ze.getName());
 		
 		if (ze.isDirectory())
 		{
@@ -21,9 +25,9 @@ class Utils
 		}
 		else
 		{
-			File parentDir = new File(entry.getParent());
-			parentDir.mkdirs();
+			entry.getParentFile().mkdirs();
 		}
+		
 		return entry;
 	}
 	
@@ -43,43 +47,38 @@ class Utils
 	
 	public static boolean unzip(InputStream is, String destDir)
 	{
-	    File dir = new File(destDir);
-
-	    if(!dir.exists())
-	    {
-	        dir.mkdirs();
-	    }
-
-	    try
-	    {
-	        ZipInputStream zis = new ZipInputStream(is);
-	        ZipEntry ze = zis.getNextEntry();
-
-	        while(ze != null)
-	        {
-	            File newFile = createFileEntry(ze, destDir);
-	            //System.out.println("Unzipping to " + newFile.getAbsolutePath());
-	            if (! ze.isDirectory()) {
-	                copyFileContent(zis, newFile);
-	            }
-	            zis.closeEntry();
-	            ze = zis.getNextEntry();
-	        }
-
-	        zis.closeEntry();
-	        zis.close();
-	        is.close();
-	    } catch (java.util.zip.ZipException e)
-	    {
-	        e.printStackTrace();
-	        return false;
-	    } catch (IOException e)
-	    {
-	        e.printStackTrace();
-	        return false;
-	    }
-	    
-	    return true;
+		File dir = new File(destDir);
+		dir.mkdirs();
+		
+		try
+		{
+			ZipInputStream zis = new ZipInputStream(is);
+			ZipEntry ze = zis.getNextEntry();
+			
+			while(ze != null)
+			{
+				File newFile = createFileEntry(ze, destDir);
+				
+				if (! ze.isDirectory()) 
+				{
+					copyFileContent(zis, newFile);
+				}
+				
+				zis.closeEntry();
+				ze = zis.getNextEntry();
+			}
+			
+			zis.closeEntry();
+			zis.close();
+			is.close();
+		}
+		catch (Exception e)
+		{
+			logger.error("Error unzipping", e);
+			return false;
+		} 
+		
+		return true;
 	}
 	
 	public static File createTempDirectory(String prefix) throws IOException
@@ -88,11 +87,24 @@ class Utils
 		
 		temp = File.createTempFile(prefix, Long.toString(System.nanoTime()));
 		
-		if ((!(temp.delete())) || (!(temp.mkdir())))
+		if ((!(temp.delete())) || 
+			(!(temp.mkdir())))
 		{
 			throw new IOException("Failed to create temp directory: " + temp.getAbsolutePath());
 		}
 		
 		return (temp);
+	}
+	
+	public static boolean createDirectory(String dirName)
+	{
+		File dir = new File(dirName);
+		
+		if (dir.exists())
+		{
+			return dir.isDirectory();
+		}
+		
+		return dir.mkdirs();
 	}
 }

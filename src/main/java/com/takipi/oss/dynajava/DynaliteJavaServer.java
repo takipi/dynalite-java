@@ -2,6 +2,8 @@ package com.takipi.oss.dynajava;
 
 import java.io.File;
 import java.sql.DriverManager;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import io.apigee.trireme.core.NodeEnvironment;
 import io.apigee.trireme.core.NodeScript;
@@ -23,12 +25,9 @@ public class DynaliteJavaServer
 		File dynaliteScriptFile = handleDynaliteScriptFile();
 		
 		NodeEnvironment env = new NodeEnvironment();
+		String [] args = buildArgs();
 		NodeScript script = env.createScript(DynaliteJavaConfig.DYNALITE_MAIN,
-				dynaliteScriptFile, new String[] {
-						"--port", Integer.toString(config.getPort()),
-						"--jdbc", config.getJdbcEndpoint(),
-						"--jdbcUser", config.getUser(),
-						"--jdbcPassword", config.getPassword() });
+				dynaliteScriptFile, args);
 		
 		script.setNodeVersion(DynaliteJavaConfig.NODE_VERSION);
 		ScriptStatus status = script.execute().get();
@@ -40,9 +39,35 @@ public class DynaliteJavaServer
 		}
 	}
 	
+	private String[] buildArgs()
+	{
+		ArrayList<String> array = new ArrayList<>();
+		
+		array.addAll(Arrays.asList(new String [] {
+				"--port", Integer.toString(config.getPort()),
+				"--jdbc", config.getJdbcEndpoint()}));
+		
+		if (config.getUser() != null)
+		{
+			array.add("--user");
+			array.add(config.getUser());
+		}
+		
+		if (config.getPassword() != null)
+		{
+			array.add("--password");
+			array.add(config.getPassword());
+		}
+
+		String [] args = new String[array.size()];
+		
+		return array.toArray(args);
+	}
+
 	private File handleDynaliteScriptFile()
 	{
 		File scriptDir = new File(config.getDynaliteScriptDir());
+		
 		if (!scriptDir.exists())
 		{
 			throw new IllegalStateException(
