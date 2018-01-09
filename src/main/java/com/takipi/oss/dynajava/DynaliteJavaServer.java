@@ -49,13 +49,13 @@ public class DynaliteJavaServer
 		
 		if (config.getUser() != null)
 		{
-			array.add("--user");
+			array.add("--jdbcUser");
 			array.add(config.getUser());
 		}
 		
 		if (config.getPassword() != null)
 		{
-			array.add("--password");
+			array.add("--jdbcPassword");
 			array.add(config.getPassword());
 		}
 
