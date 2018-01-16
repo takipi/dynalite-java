@@ -16,6 +16,7 @@ public class DynaliteJavaConfig
 	private String password;
 	private String dynaliteScriptDir;
 	private String tempdir;
+	private boolean skipExtraction;
 
 	public DynaliteJavaConfig()
 	{
@@ -27,6 +28,7 @@ public class DynaliteJavaConfig
 		this.port = DYNALITE_DEFAULT_PORT;
 		this.jdbcEndpoint = DYNALITE_DEFAULT_JDBC_STR;
 		this.tempdir = null;
+		this.skipExtraction = false;
 	}
 
 	public int getPort()
@@ -52,6 +54,11 @@ public class DynaliteJavaConfig
 	public String getDynaliteScriptDir()
 	{
 		return dynaliteScriptDir;
+	}
+	
+	public boolean getSkipExtraction()
+	{
+		return skipExtraction;
 	}
 	
 	public void setPort(int port)
@@ -82,6 +89,11 @@ public class DynaliteJavaConfig
 	public void setTempdir(String tempdir)
 	{
 		this.tempdir = tempdir;
+	}
+	
+	public void setSkipExtraction(boolean skipExtraction) 
+	{
+		this.skipExtraction = skipExtraction;
 	}
 
 	public String getTempdir()
