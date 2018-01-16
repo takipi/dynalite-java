@@ -2,7 +2,7 @@ package com.takipi.oss.dynajava;
 
 public class DynaliteJavaConfig
 {
-	public static final String NODE_VERSION = "0.12";
+	public static final String NODE_VERSION = "0.10";
 	public static final String DYNALITE_MAIN = "cli.js";
 	public static final String NODE_MODULES = "node_modules";
 	public static final String DYNALITE_SCRIPT_ZIP_PATH = "/dynalite.zip";

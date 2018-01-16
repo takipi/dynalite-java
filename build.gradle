@@ -19,7 +19,7 @@ repositories {
 dependencies {
 	compile(
 		"commons-cli:commons-cli:1.4",
-		"io.apigee.trireme:trireme-node12src:0.9.0",
+		"io.apigee.trireme:trireme-node10src:0.9.0",
 		"io.apigee.trireme:trireme-core:0.9.0",
 		"io.apigee.trireme:trireme-kernel:0.9.0",
 		"io.apigee.trireme:trireme-jar:0.9.0",
