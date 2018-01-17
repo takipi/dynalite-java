@@ -1,15 +1,14 @@
 package com.takipi.oss.dynajava;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import java.util.zip.ZipException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class Utils
 {
