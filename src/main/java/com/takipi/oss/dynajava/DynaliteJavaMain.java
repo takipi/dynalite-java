@@ -26,7 +26,7 @@ class DynaliteJavaMain
 	public final static String PASSWORD_OPTION_STR = "password";
 	public final static String DYNALITE_SCRIPT_DIR_OPTION_STR = "dynaliteScriptDir";
 	public final static String TEMPDIR_OPTION_STR = "tempdir";
-	public final static String SKIP_DYNALITE_EXTRACTION_STR = "skipExtract";
+	public final static String SKIP_DYNALITE_EXTRACTION_OPTION_STR = "skipExtract";
 	
 	private final static Logger logger = LoggerFactory.getLogger(DynaliteJavaConfig.class);
 	
@@ -234,7 +234,7 @@ class DynaliteJavaMain
 			config.setDynaliteScriptDir(dynaliteScriptDir);
 		}
 		
-		if (cmdLine.hasOption(SKIP_DYNALITE_EXTRACTION_STR))
+		if (cmdLine.hasOption(SKIP_DYNALITE_EXTRACTION_OPTION_STR))
 		{
 			config.setSkipExtraction(true);
 		}
@@ -309,7 +309,7 @@ class DynaliteJavaMain
 				.hasArg(true)
 				.desc("Temporary directory for Dynalite application")
 				.build();
-		Option skipDynaliteExtractionOption = Option.builder(SKIP_DYNALITE_EXTRACTION_STR)
+		Option skipDynaliteExtractionOption = Option.builder(SKIP_DYNALITE_EXTRACTION_OPTION_STR)
 				.required(false)
 				.hasArg(false)
 				.desc("Skip dynalite extraction")
