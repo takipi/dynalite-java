@@ -17,6 +17,7 @@ public class DynaliteJavaConfig
 	private String dynaliteScriptDir;
 	private String tempdir;
 	private boolean skipExtraction;
+	private boolean connectionPerTable;
 
 	public DynaliteJavaConfig()
 	{
@@ -29,6 +30,7 @@ public class DynaliteJavaConfig
 		this.jdbcEndpoint = DYNALITE_DEFAULT_JDBC_STR;
 		this.tempdir = null;
 		this.skipExtraction = false;
+		this.connectionPerTable = false;
 	}
 
 	public int getPort()
@@ -100,4 +102,14 @@ public class DynaliteJavaConfig
 	{
 		return tempdir;
 	}
+	
+	public boolean isConnectionPerTable()
+	{
+		return connectionPerTable;
+	}
+	
+	public void setConnectionPerTable(boolean connectionPerTable)
+	{
+		this.connectionPerTable = connectionPerTable;
+	}	
 }

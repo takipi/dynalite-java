@@ -27,6 +27,7 @@ class DynaliteJavaMain
 	public final static String DYNALITE_SCRIPT_DIR_OPTION_STR = "dynaliteScriptDir";
 	public final static String TEMPDIR_OPTION_STR = "tempdir";
 	public final static String SKIP_DYNALITE_EXTRACTION_OPTION_STR = "skipExtract";
+	public final static String CONNECTION_PER_TABLE = "connectionPerTable";
 	
 	private final static Logger logger = LoggerFactory.getLogger(DynaliteJavaConfig.class);
 	
@@ -239,6 +240,11 @@ class DynaliteJavaMain
 			config.setSkipExtraction(true);
 		}
 		
+		if(cmdLine.hasOption(CONNECTION_PER_TABLE))
+		{
+			config.setConnectionPerTable(true);
+		}
+		
 		return config;
 	}
 	
@@ -315,6 +321,12 @@ class DynaliteJavaMain
 				.desc("Skip dynalite extraction")
 				.build();
 		
+		Option connectionPerTable = Option.builder(CONNECTION_PER_TABLE)
+				.required(false)
+				.hasArg(false)
+				.desc("Split tables in h2 to a file")
+				.build();
+		
 		Options options = new Options();
 		options.addOption(helpOption);
 		options.addOption(portOption);
@@ -324,6 +336,7 @@ class DynaliteJavaMain
 		options.addOption(dynaliteScriptDirOption);
 		options.addOption(tmpdirOption);
 		options.addOption(skipDynaliteExtractionOption);
+		options.addOption(connectionPerTable);
 		
 		return options;
 	}
