@@ -27,6 +27,7 @@ class DynaliteJavaMain
 	public final static String DYNALITE_SCRIPT_DIR_OPTION_STR = "dynaliteScriptDir";
 	public final static String TEMPDIR_OPTION_STR = "tempdir";
 	public final static String SKIP_DYNALITE_EXTRACTION_OPTION_STR = "skipExtract";
+	public final static String DYNAMITE_COUNT_OPTION_STR = "dynamite";
 	
 	private final static Logger logger = LoggerFactory.getLogger(DynaliteJavaConfig.class);
 	
@@ -239,6 +240,14 @@ class DynaliteJavaMain
 			config.setSkipExtraction(true);
 		}
 		
+		if (cmdLine.hasOption(DYNAMITE_COUNT_OPTION_STR))
+		{
+			String dynamiteCountStr = cmdLine.getOptionValue(DYNAMITE_COUNT_OPTION_STR);
+			int dynamiteCount = Integer.parseInt(dynamiteCountStr);
+			
+			config.setDynamiteCount(dynamiteCount);
+		}
+		
 		return config;
 	}
 	
@@ -314,6 +323,12 @@ class DynaliteJavaMain
 				.hasArg(false)
 				.desc("Skip dynalite extraction")
 				.build();
+		Option dynamiteOption = Option.builder(DYNAMITE_COUNT_OPTION_STR)
+				.required(false)
+				.hasArg(true)
+				.type(Integer.class)
+				.desc("Enable dynamite")
+				.build();
 		
 		Options options = new Options();
 		options.addOption(helpOption);
@@ -324,6 +339,7 @@ class DynaliteJavaMain
 		options.addOption(dynaliteScriptDirOption);
 		options.addOption(tmpdirOption);
 		options.addOption(skipDynaliteExtractionOption);
+		options.addOption(dynamiteOption);
 		
 		return options;
 	}

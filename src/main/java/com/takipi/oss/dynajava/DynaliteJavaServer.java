@@ -4,9 +4,12 @@ import java.io.File;
 import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.Future;
 
 import io.apigee.trireme.core.NodeEnvironment;
 import io.apigee.trireme.core.NodeScript;
+import io.apigee.trireme.core.ScriptFuture;
 import io.apigee.trireme.core.ScriptStatus;
 
 public class DynaliteJavaServer
@@ -22,29 +25,46 @@ public class DynaliteJavaServer
 	{
 		handleJDBCEndpoint();
 		
-		File dynaliteScriptFile = handleDynaliteScriptFile();
+		int dynamiteCount = config.getDynamiteCount();
+		boolean useDynamiteProxy = (dynamiteCount > 1);
 		
-		NodeEnvironment env = new NodeEnvironment();
-		String [] args = buildArgs();
-		NodeScript script = env.createScript(DynaliteJavaConfig.DYNALITE_MAIN,
-				dynaliteScriptFile, args);
+		List<ScriptFuture> scriptFutures = new ArrayList<ScriptFuture>(dynamiteCount);
 		
-		script.setNodeVersion(DynaliteJavaConfig.NODE_VERSION);
-		ScriptStatus status = script.execute().get();
-		
-		if (!status.isOk())
+		for (int i = 0 ; i <= dynamiteCount ; i++)
 		{
-			throw new IllegalStateException(
-					"Error starting dynalite. Code: " + status.getExitCode() + ", Cause: " + status.getCause());
+			boolean isDynamiteProxy = ((useDynamiteProxy) && (i == 0));
+			String scriptName = isDynamiteProxy ? DynaliteJavaConfig.DYNAMITE_PROXY_MAIN : DynaliteJavaConfig.DYNALITE_MAIN;
+			
+			File dynaliteScriptFile = handleDynaliteScriptFile(scriptName);
+			
+			NodeEnvironment env = new NodeEnvironment();
+			String[] args = buildArgs(i);
+			NodeScript script = env.createScript(DynaliteJavaConfig.DYNALITE_MAIN,
+					dynaliteScriptFile, args);
+			
+			script.setNodeVersion(DynaliteJavaConfig.NODE_VERSION);
+			
+			scriptFutures.add(script.execute());
+		}
+		
+		for (ScriptFuture future : scriptFutures)
+		{
+			ScriptStatus status = future.get();
+			
+			if (!status.isOk())
+			{
+				throw new IllegalStateException(
+						"Error starting dynalite. Code: " + status.getExitCode() + ", Cause: " + status.getCause());
+			}
 		}
 	}
 	
-	private String[] buildArgs()
+	private String[] buildArgs(int index)
 	{
 		ArrayList<String> array = new ArrayList<>();
 		
 		array.addAll(Arrays.asList(new String [] {
-				"--port", Integer.toString(config.getPort()),
+				"--port", Integer.toString(config.getPort() + index),
 				"--jdbc", config.getJdbcEndpoint()}));
 		
 		if (config.getUser() != null)
@@ -58,13 +78,19 @@ public class DynaliteJavaServer
 			array.add("--jdbcPassword");
 			array.add(config.getPassword());
 		}
-
+		
+		if (config.getDynamiteCount() > 1)
+		{
+			array.add("--dynamite");
+			array.add(Integer.toString(config.getDynamiteCount()));
+		}
+		
 		String [] args = new String[array.size()];
 		
 		return array.toArray(args);
 	}
 
-	private File handleDynaliteScriptFile()
+	private File handleDynaliteScriptFile(String scriptName)
 	{
 		File scriptDir = new File(config.getDynaliteScriptDir());
 		
@@ -75,7 +101,8 @@ public class DynaliteJavaServer
 											scriptDir.getAbsolutePath());
 		}
 		
-		File devNodeModules = new File(config.getDynaliteScriptDir(), DynaliteJavaConfig.NODE_MODULES);
+		File devNodeModules = new File(config.getDynaliteScriptDir(),
+				DynaliteJavaConfig.NODE_MODULES);
 		
 		if (!devNodeModules.exists())
 		{
@@ -83,7 +110,7 @@ public class DynaliteJavaServer
 					"You must run 'npm install' for: " + scriptDir.getAbsolutePath());
 		}
 		
-		return new File(scriptDir, DynaliteJavaConfig.DYNALITE_MAIN);
+		return new File(scriptDir, scriptName);
 	}
 	
 	private String handleJDBCEndpoint() throws Exception

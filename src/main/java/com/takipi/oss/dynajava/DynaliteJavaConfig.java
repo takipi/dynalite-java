@@ -3,6 +3,7 @@ package com.takipi.oss.dynajava;
 public class DynaliteJavaConfig
 {
 	public static final String NODE_VERSION = "0.10";
+	public static final String DYNAMITE_PROXY_MAIN = "proxy.js";
 	public static final String DYNALITE_MAIN = "cli.js";
 	public static final String NODE_MODULES = "node_modules";
 	public static final String DYNALITE_SCRIPT_ZIP_PATH = "/dynalite.zip";
@@ -17,7 +18,8 @@ public class DynaliteJavaConfig
 	private String dynaliteScriptDir;
 	private String tempdir;
 	private boolean skipExtraction;
-
+	private int dynamiteCount;
+	
 	public DynaliteJavaConfig()
 	{
 		setDefault();
@@ -29,6 +31,7 @@ public class DynaliteJavaConfig
 		this.jdbcEndpoint = DYNALITE_DEFAULT_JDBC_STR;
 		this.tempdir = null;
 		this.skipExtraction = false;
+		this.dynamiteCount = 1;
 	}
 
 	public int getPort()
@@ -99,5 +102,15 @@ public class DynaliteJavaConfig
 	public String getTempdir()
 	{
 		return tempdir;
+	}
+	
+	public void setDynamiteCount(int dynamiteCount)
+	{
+		this.dynamiteCount = dynamiteCount;
+	}
+	
+	public int getDynamiteCount()
+	{
+		return dynamiteCount;
 	}
 }
