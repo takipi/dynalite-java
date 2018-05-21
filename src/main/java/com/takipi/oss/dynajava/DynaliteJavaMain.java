@@ -324,7 +324,7 @@ class DynaliteJavaMain
 		Option dbPerTable = Option.builder(DB_PER_TABLE)
 				.required(false)
 				.hasArg(false)
-				.desc("Split tables in h2 to a file")
+				.desc("Save each table in its own database")
 				.build();
 		
 		Options options = new Options();
