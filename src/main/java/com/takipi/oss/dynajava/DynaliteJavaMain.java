@@ -27,9 +27,9 @@ class DynaliteJavaMain
 	public final static String DYNALITE_SCRIPT_DIR_OPTION_STR = "dynaliteScriptDir";
 	public final static String TEMPDIR_OPTION_STR = "tempdir";
 	public final static String SKIP_DYNALITE_EXTRACTION_OPTION_STR = "skipExtract";
-	public final static String CONNECTION_PER_TABLE = "connectionPerTable";
 	public final static String DYNAMITE_COUNT_OPTION_STR = "dynamite";
-
+	public final static String DB_PER_TABLE = "dbPerTable";
+	
 	private final static Logger logger = LoggerFactory.getLogger(DynaliteJavaConfig.class);
 	
 	public static void main(String[] args) throws Exception
@@ -241,9 +241,9 @@ class DynaliteJavaMain
 			config.setSkipExtraction(true);
 		}
 		
-		if(cmdLine.hasOption(CONNECTION_PER_TABLE))
+		if(cmdLine.hasOption(DB_PER_TABLE))
 		{
-			config.setConnectionPerTable(true);
+			config.setDbPerTable(true);
 		}
 			
 		if (cmdLine.hasOption(DYNAMITE_COUNT_OPTION_STR))
@@ -254,7 +254,7 @@ class DynaliteJavaMain
 			config.setDynamiteCount(dynamiteCount);
 			
 			// if dynamite is true, so is split
-			config.setConnectionPerTable(true);
+			config.setDbPerTable(true);
 		}
 		
 		return config;
@@ -332,10 +332,10 @@ class DynaliteJavaMain
 				.hasArg(false)
 				.desc("Skip dynalite extraction")
 				.build();
-		Option connectionPerTable = Option.builder(CONNECTION_PER_TABLE)
+		Option dbPerTable = Option.builder(DB_PER_TABLE)
 				.required(false)
 				.hasArg(false)
-				.desc("Split tables in h2 to a file")
+				.desc("Save each table in its own database")
 				.build();
 		Option dynamiteOption = Option.builder(DYNAMITE_COUNT_OPTION_STR)
 				.required(false)
@@ -353,8 +353,8 @@ class DynaliteJavaMain
 		options.addOption(dynaliteScriptDirOption);
 		options.addOption(tmpdirOption);
 		options.addOption(skipDynaliteExtractionOption);
-		options.addOption(connectionPerTable);
 		options.addOption(dynamiteOption);
+		options.addOption(dbPerTable);
 		
 		return options;
 	}

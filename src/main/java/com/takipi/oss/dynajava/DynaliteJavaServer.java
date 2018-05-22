@@ -64,10 +64,8 @@ public class DynaliteJavaServer
 		ArrayList<String> array = new ArrayList<>();
 		
 		array.addAll(Arrays.asList(new String [] {
-				"--port", Integer.toString(config.getPort() + index),
-				"--jdbc", config.getJdbcEndpoint(),
-				"--connectionPerTable", Boolean.toString(config.isConnectionPerTable())
-		}));
+				"--port", Integer.toString(config.getPort()),
+				"--jdbc", config.getJdbcEndpoint()}));
 		
 		if (config.getUser() != null)
 		{
@@ -86,6 +84,8 @@ public class DynaliteJavaServer
 			array.add("--dynamite");
 			array.add(Integer.toString(config.getDynamiteCount()));
 		}
+
+		array.add(config.isDbPerTable() ? "--dbPerTable" : "");
 		
 		String [] args = new String[array.size()];
 		
