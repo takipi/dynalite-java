@@ -17,6 +17,7 @@ public class DynaliteJavaConfig
 	private String dynaliteScriptDir;
 	private String tempdir;
 	private boolean skipExtraction;
+	private boolean dbPerTable;
 
 	public DynaliteJavaConfig()
 	{
@@ -29,6 +30,7 @@ public class DynaliteJavaConfig
 		this.jdbcEndpoint = DYNALITE_DEFAULT_JDBC_STR;
 		this.tempdir = null;
 		this.skipExtraction = false;
+		this.dbPerTable = false;
 	}
 
 	public int getPort()
@@ -100,4 +102,14 @@ public class DynaliteJavaConfig
 	{
 		return tempdir;
 	}
+	
+	public boolean isDbPerTable()
+	{
+		return dbPerTable;
+	}
+	
+	public void setDbPerTable(boolean dbPerTable)
+	{
+		this.dbPerTable = dbPerTable;
+	}	
 }

@@ -58,7 +58,9 @@ public class DynaliteJavaServer
 			array.add("--jdbcPassword");
 			array.add(config.getPassword());
 		}
-
+		
+		array.add(config.isDbPerTable() ? "--dbPerTable" : "");
+		
 		String [] args = new String[array.size()];
 		
 		return array.toArray(args);
