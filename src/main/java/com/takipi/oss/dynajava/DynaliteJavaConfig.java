@@ -20,6 +20,7 @@ public class DynaliteJavaConfig
 	private boolean skipExtraction;
 	private int dynamiteCount;
 	private boolean dbPerTable;
+	private int counter;
 
 	public DynaliteJavaConfig()
 	{
@@ -123,5 +124,12 @@ public class DynaliteJavaConfig
 	public int getDynamiteCount()
 	{
 		return dynamiteCount;
+	}
+	
+	public int getIncrementedPort()
+	{
+		int retVal = port + counter;
+		counter++;
+		return retVal;
 	}
 }

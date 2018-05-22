@@ -23,28 +23,36 @@ public class DynaliteJavaServer
 	
 	public void start() throws Exception
 	{
+		List<ScriptFuture> scriptFutures = new ArrayList<ScriptFuture>();
+		
 		handleJDBCEndpoint();
 		
-		int dynamiteCount = config.getDynamiteCount();
-		boolean useDynamiteProxy = (dynamiteCount > 1);
+		String scriptName = config.isDbPerTable() ? DynaliteJavaConfig.DYNAMITE_PROXY_MAIN : DynaliteJavaConfig.DYNALITE_MAIN;
 		
-		List<ScriptFuture> scriptFutures = new ArrayList<ScriptFuture>(dynamiteCount);
+		String[] args = buildArgs();
 		
-		for (int i = 0 ; i <= dynamiteCount ; i++)
+		File dynaliteProxyScriptFile = handleDynaliteScriptFile(scriptName);
+		
+		NodeScript script = getNodeScript(dynaliteProxyScriptFile, args);
+		
+		scriptFutures.add(script.execute());
+		
+		if (config.isDbPerTable())
 		{
-			boolean isDynamiteProxy = ((useDynamiteProxy) && (i == 0));
-			String scriptName = isDynamiteProxy ? DynaliteJavaConfig.DYNAMITE_PROXY_MAIN : DynaliteJavaConfig.DYNALITE_MAIN;
+			int counter = 0;
 			
-			File dynaliteScriptFile = handleDynaliteScriptFile(scriptName);
-			
-			NodeEnvironment env = new NodeEnvironment();
-			String[] args = buildArgs(i);
-			NodeScript script = env.createScript(DynaliteJavaConfig.DYNALITE_MAIN,
-					dynaliteScriptFile, args);
-			
-			script.setNodeVersion(DynaliteJavaConfig.NODE_VERSION);
-			
-			scriptFutures.add(script.execute());
+			while (counter < config.getDynamiteCount())
+			{
+				File dynaliteScriptFile = handleDynaliteScriptFile(DynaliteJavaConfig.DYNALITE_MAIN);
+				
+				args = buildArgs();
+				
+				script = getNodeScript(dynaliteScriptFile, args);
+				
+				scriptFutures.add(script.execute());
+				
+				counter++;
+			}
 		}
 		
 		for (ScriptFuture future : scriptFutures)
@@ -59,12 +67,12 @@ public class DynaliteJavaServer
 		}
 	}
 	
-	private String[] buildArgs(int index)
+	private String[] buildArgs()
 	{
 		ArrayList<String> array = new ArrayList<>();
 		
 		array.addAll(Arrays.asList(new String [] {
-				"--port", Integer.toString(config.getPort()),
+				"--port", Integer.toString(config.getIncrementedPort()),
 				"--jdbc", config.getJdbcEndpoint()}));
 		
 		if (config.getUser() != null)
@@ -139,5 +147,17 @@ public class DynaliteJavaServer
 		java.sql.Driver driver = (java.sql.Driver)(Class
 				.forName(driverName, true, DynaliteJavaServer.class.getClassLoader()).newInstance());
 		DriverManager.registerDriver(driver);
+	}
+	
+	private NodeScript getNodeScript(File dynaliteScriptFile, String[] args) throws NodeException
+	{
+		NodeEnvironment env = new NodeEnvironment();
+		
+		NodeScript script = env.createScript(DynaliteJavaConfig.DYNALITE_MAIN,
+				dynaliteScriptFile, args);
+		
+		script.setNodeVersion(DynaliteJavaConfig.NODE_VERSION);
+
+		return script;
 	}
 }
