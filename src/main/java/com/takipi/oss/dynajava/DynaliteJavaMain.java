@@ -28,6 +28,7 @@ class DynaliteJavaMain
 	public final static String TEMPDIR_OPTION_STR = "tempdir";
 	public final static String SKIP_DYNALITE_EXTRACTION_OPTION_STR = "skipExtract";
 	public final static String DYNAMITE_COUNT_OPTION_STR = "dynamite";
+	public final static String TABLES_MAPPING_PATH = "tablesmappingpath";
 	public final static String DB_PER_TABLE = "dbPerTable";
 	
 	private final static Logger logger = LoggerFactory.getLogger(DynaliteJavaConfig.class);
@@ -253,8 +254,11 @@ class DynaliteJavaMain
 			
 			config.setDynamiteCount(dynamiteCount);
 			
-			// if dynamite is true, so is split
-			config.setDbPerTable(true);
+		}
+		
+		if (cmdLine.hasOption(TABLES_MAPPING_PATH))
+		{
+			config.setTableNamesMappingFile(cmdLine.getOptionValue(TABLES_MAPPING_PATH));
 		}
 		
 		return config;
@@ -343,6 +347,11 @@ class DynaliteJavaMain
 				.type(Integer.class)
 				.desc("Enable dynamite")
 				.build();
+		Option tablesMappingPath = Option.builder(TABLES_MAPPING_PATH)
+				.required(false)
+				.hasArg(true)
+				.desc("Json path of table names mapping")
+				.build();
 		
 		Options options = new Options();
 		options.addOption(helpOption);
@@ -355,6 +364,7 @@ class DynaliteJavaMain
 		options.addOption(skipDynaliteExtractionOption);
 		options.addOption(dynamiteOption);
 		options.addOption(dbPerTable);
+		options.addOption(tablesMappingPath);
 		
 		return options;
 	}

@@ -20,6 +20,7 @@ public class DynaliteJavaConfig
 	private boolean skipExtraction;
 	private int dynamiteCount;
 	private boolean dbPerTable;
+	private String tablesMappingPath;
 	private int counter;
 
 	public DynaliteJavaConfig()
@@ -124,6 +125,16 @@ public class DynaliteJavaConfig
 	public int getDynamiteCount()
 	{
 		return dynamiteCount;
+	}
+	
+	public String getTablesMappingPath()
+	{
+		return tablesMappingPath;
+	}
+
+	public void setTableNamesMappingFile(String tablesMappingPath)
+	{
+		this.tablesMappingPath = tablesMappingPath;
 	}
 	
 	public int getIncrementedPort()

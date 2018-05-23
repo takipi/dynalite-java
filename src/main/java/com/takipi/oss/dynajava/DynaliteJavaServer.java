@@ -5,7 +5,6 @@ import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Future;
 
 import io.apigee.trireme.core.NodeEnvironment;
 import io.apigee.trireme.core.NodeScript;
@@ -92,6 +91,12 @@ public class DynaliteJavaServer
 			array.add("--dynamite");
 			array.add(Integer.toString(config.getDynamiteCount()));
 		}
+		
+		if(config.getTablesMappingPath() != null)
+		{
+			array.add("--tablesmappingpath");
+			array.add(config.getTablesMappingPath());
+		}
 
 		array.add(config.isDbPerTable() ? "--dbPerTable" : "");
 		
@@ -149,7 +154,7 @@ public class DynaliteJavaServer
 		DriverManager.registerDriver(driver);
 	}
 	
-	private NodeScript getNodeScript(File dynaliteScriptFile, String[] args) throws NodeException
+	private NodeScript getNodeScript(File dynaliteScriptFile, String[] args) throws Exception
 	{
 		NodeEnvironment env = new NodeEnvironment();
 		
