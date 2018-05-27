@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.apigee.trireme.core.NodeEnvironment;
 import io.apigee.trireme.core.NodeScript;
 import io.apigee.trireme.core.ScriptFuture;
@@ -13,6 +16,8 @@ import io.apigee.trireme.core.ScriptStatus;
 
 public class DynaliteJavaServer
 {
+	private final static Logger logger = LoggerFactory.getLogger(DynaliteJavaServer.class);
+	
 	private DynaliteJavaConfig config;
 	
 	public DynaliteJavaServer(DynaliteJavaConfig config)
@@ -22,36 +27,19 @@ public class DynaliteJavaServer
 	
 	public void start() throws Exception
 	{
-		List<ScriptFuture> scriptFutures = new ArrayList<ScriptFuture>();
-		
+		makeSureNodeModulesInstalled(new File(config.getDynaliteScriptDir()));
 		handleJDBCEndpoint();
 		
-		String scriptName = config.isDbPerTable() ? DynaliteJavaConfig.DYNAMITE_PROXY_MAIN : DynaliteJavaConfig.DYNALITE_MAIN;
+		List<ScriptFuture> scriptFutures = new ArrayList<ScriptFuture>();
 		
-		String[] args = buildArgs();
-		
-		File dynaliteProxyScriptFile = handleDynaliteScriptFile(scriptName);
-		
-		NodeScript script = getNodeScript(dynaliteProxyScriptFile, args);
-		
-		scriptFutures.add(script.execute());
-		
-		if (config.isDbPerTable())
+		if (isDynamiteEnabled()) 
 		{
-			int counter = 0;
-			
-			while (counter < config.getDynamiteCount())
-			{
-				File dynaliteScriptFile = handleDynaliteScriptFile(DynaliteJavaConfig.DYNALITE_MAIN);
-				
-				args = buildArgs();
-				
-				script = getNodeScript(dynaliteScriptFile, args);
-				
-				scriptFutures.add(script.execute());
-				
-				counter++;
-			}
+			scriptFutures.add(startDynamiteProxy(config.getPort()));
+			scriptFutures.addAll(startDynamiteInstances(config.getPort() + 1));
+		}
+		else
+		{
+			scriptFutures.add(startDynaliteInstance(config.getPort()));
 		}
 		
 		for (ScriptFuture future : scriptFutures)
@@ -66,66 +54,67 @@ public class DynaliteJavaServer
 		}
 	}
 	
-	private String[] buildArgs()
+	private boolean isDynamiteEnabled()
 	{
-		ArrayList<String> array = new ArrayList<>();
-		
-		array.addAll(Arrays.asList(new String [] {
-				"--port", Integer.toString(config.getIncrementedPort()),
-				"--jdbc", config.getJdbcEndpoint()}));
-		
-		if (config.getUser() != null)
-		{
-			array.add("--jdbcUser");
-			array.add(config.getUser());
-		}
-		
-		if (config.getPassword() != null)
-		{
-			array.add("--jdbcPassword");
-			array.add(config.getPassword());
-		}
-		
-		if (config.getDynamiteCount() > 1)
-		{
-			array.add("--dynamite");
-			array.add(Integer.toString(config.getDynamiteCount()));
-		}
-		
-		if(config.getTablesMappingPath() != null)
-		{
-			array.add("--tablesMappingPath");
-			array.add(config.getTablesMappingPath());
-		}
-
-		array.add(config.isDbPerTable() ? "--dbPerTable" : "");
-		
-		String [] args = new String[array.size()];
-		
-		return array.toArray(args);
+		return config.getDynamiteCount() > 1;
 	}
-
-	private File handleDynaliteScriptFile(String scriptName)
+	
+	private ScriptFuture startDynamiteProxy(int port) throws Exception
 	{
-		File scriptDir = new File(config.getDynaliteScriptDir());
+		String[] args = new String[] {
+			"--port", Integer.toString(port),
+			"--dynamite", Integer.toString(config.getDynamiteCount()),
+			"--tablesMappingPath", config.getTablesMappingPath()
+		};
 		
-		if (!scriptDir.exists())
+		return executeNodeScript(DynaliteJavaConfig.DYNAMITE_PROXY_MAIN, args);
+	}
+	
+	private List<ScriptFuture> startDynamiteInstances(int portBase) throws Exception
+	{
+		List<ScriptFuture> result = new ArrayList<ScriptFuture>();
+		
+		for (int i = 0; i < config.getDynamiteCount(); i++)
 		{
-			throw new IllegalStateException(
-					"Could find dynalite dev location in expected directory: " +
-											scriptDir.getAbsolutePath());
+			String[] args = new String[] {
+				"--port", Integer.toString(portBase + i),
+				"--jdbcUser", config.getUser(),
+				"--jdbcPassword", config.getPassword(),
+				"--jdbc", config.getJdbcEndpoint(),
+				config.isDbPerTable() ? "--dbPerTable" : ""
+			};
+			
+			result.add(executeNodeScript(DynaliteJavaConfig.DYNALITE_MAIN, args));
 		}
 		
-		File devNodeModules = new File(config.getDynaliteScriptDir(),
-				DynaliteJavaConfig.NODE_MODULES);
+		return result;
+	}
+	
+	private ScriptFuture startDynaliteInstance(int port) throws Exception
+	{
+		String[] args = new String[] {
+			"--port", Integer.toString(port),
+			"--jdbcUser", config.getUser(),
+			"--jdbcPassword", config.getPassword(),
+			"--jdbc", config.getJdbcEndpoint(),
+			config.isDbPerTable() ? "--dbPerTable" : ""
+		};
 		
-		if (!devNodeModules.exists())
-		{
-			throw new IllegalStateException(
-					"You must run 'npm install' for: " + scriptDir.getAbsolutePath());
-		}
+		return executeNodeScript(DynaliteJavaConfig.DYNALITE_MAIN, args);
+	}
+	
+	private ScriptFuture executeNodeScript(String scriptName, String[] args) throws Exception
+	{
+		File scriptFile = new File(config.getDynaliteScriptDir(), scriptName);
 		
-		return new File(scriptDir, scriptName);
+		NodeEnvironment env = new NodeEnvironment();
+		NodeScript script = env.createScript(scriptFile.getName(), scriptFile, args);
+		
+		script.setNodeVersion(DynaliteJavaConfig.NODE_VERSION);
+		
+		logger.info("Executing {} with args {}. (loc: {})", scriptName, args, scriptFile.getAbsolutePath());
+		
+		return script.execute();
 	}
 	
 	private String handleJDBCEndpoint() throws Exception
@@ -154,15 +143,13 @@ public class DynaliteJavaServer
 		DriverManager.registerDriver(driver);
 	}
 	
-	private NodeScript getNodeScript(File dynaliteScriptFile, String[] args) throws Exception
+	private void makeSureNodeModulesInstalled(File dynaliteScriptsDir) 
 	{
-		NodeEnvironment env = new NodeEnvironment();
+		File devNodeModules = new File(dynaliteScriptsDir, DynaliteJavaConfig.NODE_MODULES);
 		
-		NodeScript script = env.createScript(DynaliteJavaConfig.DYNALITE_MAIN,
-				dynaliteScriptFile, args);
-		
-		script.setNodeVersion(DynaliteJavaConfig.NODE_VERSION);
-
-		return script;
+		if (!devNodeModules.exists())
+		{
+			throw new IllegalStateException("You must run 'npm install' for: " + dynaliteScriptsDir.getAbsolutePath());
+		}
 	}
 }

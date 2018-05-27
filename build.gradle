@@ -19,10 +19,10 @@ repositories {
 dependencies {
 	compile(
 		"commons-cli:commons-cli:1.4",
-		"io.apigee.trireme:trireme-node10src:0.9.3",
-		"io.apigee.trireme:trireme-core:0.9.3",
-		"io.apigee.trireme:trireme-kernel:0.9.3",
-		"io.apigee.trireme:trireme-jar:0.9.3",
+		"io.apigee.trireme:trireme-node10src:0.9.0",
+		"io.apigee.trireme:trireme-core:0.9.0",
+		"io.apigee.trireme:trireme-kernel:0.9.0",
+		"io.apigee.trireme:trireme-jar:0.9.0",
 		"org.slf4j:slf4j-api:1.7.7",
 		"com.h2database:h2:1.4.196",
 		"mysql:mysql-connector-java:6.0.6"
@@ -38,22 +38,26 @@ fatJar {
 	exclude 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.SF'
 }
 
-task putDynaZipInResources() << {
-	if (rootProject.hasProperty("zipFile")) {
-		def resourcesDir = sourceSets.main.resources.srcDirs[0]
-		
-		println "Copy $zipFile to $resourcesDir"
-		
-		ant.copy(file: zipFile, tofile:"$resourcesDir/dynalite.zip", overwrite:true)
+task putDynaZipInResources() {
+	doLast {
+		if (rootProject.hasProperty("zipFile")) {
+			def resourcesDir = sourceSets.main.resources.srcDirs[0]
+			
+			println "Copy $zipFile to $resourcesDir"
+			
+			ant.copy(file: zipFile, tofile:"$resourcesDir/dynalite.zip", overwrite:true)
+		}
 	}
 }
 
-task copyJar(dependsOn: fatJar) << {
+task copyJar(dependsOn: fatJar) {
+	doLast {
 		if (rootProject.hasProperty("jarTargetFile")) {
 				println "Copying $jar.archivePath to $jarTargetFile"
 
 				ant.copy(file:jar.archivePath, tofile:jarTargetFile)
 		}
+	}
 }
 
 processResources.dependsOn(putDynaZipInResources)

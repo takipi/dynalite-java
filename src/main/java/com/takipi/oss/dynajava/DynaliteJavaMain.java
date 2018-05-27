@@ -28,10 +28,10 @@ class DynaliteJavaMain
 	public final static String TEMPDIR_OPTION_STR = "tempdir";
 	public final static String SKIP_DYNALITE_EXTRACTION_OPTION_STR = "skipExtract";
 	public final static String DYNAMITE_COUNT_OPTION_STR = "dynamite";
-	public final static String TABLES_MAPPING_PATH = "tablesmappingpath";
+	public final static String TABLES_MAPPING_PATH = "tablesMappingPath";
 	public final static String DB_PER_TABLE = "dbPerTable";
 	
-	private final static Logger logger = LoggerFactory.getLogger(DynaliteJavaConfig.class);
+	private final static Logger logger = LoggerFactory.getLogger(DynaliteJavaMain.class);
 	
 	public static void main(String[] args) throws Exception
 	{
@@ -246,14 +246,23 @@ class DynaliteJavaMain
 		{
 			config.setDbPerTable(true);
 		}
-			
+		
 		if (cmdLine.hasOption(DYNAMITE_COUNT_OPTION_STR))
 		{
 			String dynamiteCountStr = cmdLine.getOptionValue(DYNAMITE_COUNT_OPTION_STR);
-			int dynamiteCount = Integer.parseInt(dynamiteCountStr);
+			int dynamiteCount;
+			
+			try 
+			{
+				dynamiteCount = Integer.parseInt(dynamiteCountStr);
+			} 
+			catch (Exception e) 
+			{
+				System.out.println("Error parsing dynamite count number: " + dynamiteCountStr);
+				dynamiteCount = 1;
+			}
 			
 			config.setDynamiteCount(dynamiteCount);
-			
 		}
 		
 		if (cmdLine.hasOption(TABLES_MAPPING_PATH))

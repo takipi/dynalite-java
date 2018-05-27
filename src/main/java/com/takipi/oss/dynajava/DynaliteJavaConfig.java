@@ -3,7 +3,7 @@ package com.takipi.oss.dynajava;
 public class DynaliteJavaConfig
 {
 	public static final String NODE_VERSION = "0.10";
-	public static final String DYNAMITE_PROXY_MAIN = "proxy.js";
+	public static final String DYNAMITE_PROXY_MAIN = "dynamite-proxy.js";
 	public static final String DYNALITE_MAIN = "cli.js";
 	public static final String NODE_MODULES = "node_modules";
 	public static final String DYNALITE_SCRIPT_ZIP_PATH = "/dynalite.zip";
@@ -21,7 +21,6 @@ public class DynaliteJavaConfig
 	private int dynamiteCount;
 	private boolean dbPerTable;
 	private String tablesMappingPath;
-	private int counter;
 
 	public DynaliteJavaConfig()
 	{
@@ -131,16 +130,9 @@ public class DynaliteJavaConfig
 	{
 		return tablesMappingPath;
 	}
-
+	
 	public void setTableNamesMappingFile(String tablesMappingPath)
 	{
 		this.tablesMappingPath = tablesMappingPath;
-	}
-	
-	public int getIncrementedPort()
-	{
-		int retVal = port + counter;
-		counter++;
-		return retVal;
 	}
 }
