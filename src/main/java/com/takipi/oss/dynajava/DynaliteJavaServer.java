@@ -94,7 +94,7 @@ public class DynaliteJavaServer
 		
 		if(config.getTablesMappingPath() != null)
 		{
-			array.add("--tablesmappingpath");
+			array.add("--tablesMappingPath");
 			array.add(config.getTablesMappingPath());
 		}
 
