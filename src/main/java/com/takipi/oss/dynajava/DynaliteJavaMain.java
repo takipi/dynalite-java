@@ -13,7 +13,6 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,9 +26,11 @@ class DynaliteJavaMain
 	public final static String DYNALITE_SCRIPT_DIR_OPTION_STR = "dynaliteScriptDir";
 	public final static String TEMPDIR_OPTION_STR = "tempdir";
 	public final static String SKIP_DYNALITE_EXTRACTION_OPTION_STR = "skipExtract";
+	public final static String DYNAMITE_COUNT_OPTION_STR = "dynamite";
+	public final static String TABLES_MAPPING_PATH = "tablesMappingPath";
 	public final static String DB_PER_TABLE = "dbPerTable";
 	
-	private final static Logger logger = LoggerFactory.getLogger(DynaliteJavaConfig.class);
+	private final static Logger logger = LoggerFactory.getLogger(DynaliteJavaMain.class);
 	
 	public static void main(String[] args) throws Exception
 	{
@@ -245,6 +246,29 @@ class DynaliteJavaMain
 			config.setDbPerTable(true);
 		}
 		
+		if (cmdLine.hasOption(DYNAMITE_COUNT_OPTION_STR))
+		{
+			String dynamiteCountStr = cmdLine.getOptionValue(DYNAMITE_COUNT_OPTION_STR);
+			int dynamiteCount;
+			
+			try 
+			{
+				dynamiteCount = Integer.parseInt(dynamiteCountStr);
+			} 
+			catch (Exception e) 
+			{
+				System.out.println("Error parsing dynamite count number: " + dynamiteCountStr);
+				dynamiteCount = 1;
+			}
+			
+			config.setDynamiteCount(dynamiteCount);
+		}
+		
+		if (cmdLine.hasOption(TABLES_MAPPING_PATH))
+		{
+			config.setTableNamesMappingFile(cmdLine.getOptionValue(TABLES_MAPPING_PATH));
+		}
+		
 		return config;
 	}
 	
@@ -320,11 +344,21 @@ class DynaliteJavaMain
 				.hasArg(false)
 				.desc("Skip dynalite extraction")
 				.build();
-		
 		Option dbPerTable = Option.builder(DB_PER_TABLE)
 				.required(false)
 				.hasArg(false)
 				.desc("Save each table in its own database")
+				.build();
+		Option dynamiteOption = Option.builder(DYNAMITE_COUNT_OPTION_STR)
+				.required(false)
+				.hasArg(true)
+				.type(Integer.class)
+				.desc("Enable dynamite")
+				.build();
+		Option tablesMappingPath = Option.builder(TABLES_MAPPING_PATH)
+				.required(false)
+				.hasArg(true)
+				.desc("Json path of table names mapping")
 				.build();
 		
 		Options options = new Options();
@@ -336,7 +370,9 @@ class DynaliteJavaMain
 		options.addOption(dynaliteScriptDirOption);
 		options.addOption(tmpdirOption);
 		options.addOption(skipDynaliteExtractionOption);
+		options.addOption(dynamiteOption);
 		options.addOption(dbPerTable);
+		options.addOption(tablesMappingPath);
 		
 		return options;
 	}
