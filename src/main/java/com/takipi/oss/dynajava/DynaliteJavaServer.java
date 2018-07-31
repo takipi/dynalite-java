@@ -80,6 +80,7 @@ public class DynaliteJavaServer
 				"--jdbcUser", config.getUser(),
 				"--jdbcPassword", config.getPassword(),
 				"--jdbc", config.getJdbcEndpoint(),
+				"--connectionPoolMaxSize", Integer.toString(config.getConnectionPoolSize()),
 				config.isDbPerTable() ? "--dbPerTable" : ""
 			};
 			

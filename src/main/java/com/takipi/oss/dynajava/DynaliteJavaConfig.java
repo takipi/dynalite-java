@@ -20,6 +20,7 @@ public class DynaliteJavaConfig
 	private boolean skipExtraction;
 	private int dynamiteCount;
 	private boolean dbPerTable;
+	private int connectionPoolSize;
 	private String tablesMappingPath;
 
 	public DynaliteJavaConfig()
@@ -34,6 +35,7 @@ public class DynaliteJavaConfig
 		this.tempdir = null;
 		this.skipExtraction = false;
 		this.dbPerTable = false;
+		this.connectionPoolSize = 10;
 	}
 
 	public int getPort()
@@ -134,5 +136,15 @@ public class DynaliteJavaConfig
 	public void setTableNamesMappingFile(String tablesMappingPath)
 	{
 		this.tablesMappingPath = tablesMappingPath;
+	}
+	
+	public void setConnectionPoolSize(int connectionPoolSize)
+	{
+		this.connectionPoolSize = connectionPoolSize;
+	}
+	
+	public int getConnectionPoolSize()
+	{
+		return connectionPoolSize;
 	}
 }
