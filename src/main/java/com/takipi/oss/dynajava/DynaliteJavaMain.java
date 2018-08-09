@@ -250,18 +250,16 @@ class DynaliteJavaMain
 		if(cmdLine.hasOption(CONNECTION_POOL_SIZE))
 		{
 			String connectionPoolSizeStr = cmdLine.getOptionValue(CONNECTION_POOL_SIZE);
-			int connectionPoolSize;
 			
 			try 
 			{
-				connectionPoolSize = Integer.parseInt(connectionPoolSizeStr);
+				int connectionPoolSize = Integer.parseInt(connectionPoolSizeStr);
+				config.setConnectionPoolSize(connectionPoolSize);
 			} 
 			catch (Exception e) 
 			{
 				System.out.println("Error parsing connection pools size number: " + connectionPoolSizeStr);
 			}
-			
-			config.setConnectionPoolSize(connectionPoolSize);
 		}
 		
 		if (cmdLine.hasOption(DYNAMITE_COUNT_OPTION_STR))
