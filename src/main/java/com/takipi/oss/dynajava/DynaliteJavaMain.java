@@ -259,7 +259,6 @@ class DynaliteJavaMain
 			catch (Exception e) 
 			{
 				System.out.println("Error parsing connection pools size number: " + connectionPoolSizeStr);
-				connectionPoolSize = 30;
 			}
 			
 			config.setConnectionPoolSize(connectionPoolSize);
