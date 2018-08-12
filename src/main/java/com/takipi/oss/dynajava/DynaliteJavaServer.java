@@ -77,9 +77,10 @@ public class DynaliteJavaServer
 		{
 			String[] args = new String[] {
 				"--port", Integer.toString(portBase + i),
-				"--jdbcUser", config.getUser(),
-				"--jdbcPassword", config.getPassword(),
+				"--jdbcUser", (config.getUser() == null ? "" : config.getUser()),
+				"--jdbcPassword", (config.getPassword() == null ? "" : config.getPassword()),
 				"--jdbc", config.getJdbcEndpoint(),
+				"--connectionPoolMaxSize", Integer.toString(config.getConnectionPoolSize()),
 				config.isDbPerTable() ? "--dbPerTable" : ""
 			};
 			
@@ -93,8 +94,8 @@ public class DynaliteJavaServer
 	{
 		String[] args = new String[] {
 			"--port", Integer.toString(port),
-			"--jdbcUser", config.getUser(),
-			"--jdbcPassword", config.getPassword(),
+			"--jdbcUser", (config.getUser() == null ? "" : config.getUser()),
+			"--jdbcPassword", (config.getPassword() == null ? "" : config.getPassword()),
 			"--jdbc", config.getJdbcEndpoint(),
 			config.isDbPerTable() ? "--dbPerTable" : ""
 		};

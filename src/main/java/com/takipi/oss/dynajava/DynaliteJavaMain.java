@@ -29,6 +29,7 @@ class DynaliteJavaMain
 	public final static String DYNAMITE_COUNT_OPTION_STR = "dynamite";
 	public final static String TABLES_MAPPING_PATH = "tablesMappingPath";
 	public final static String DB_PER_TABLE = "dbPerTable";
+	public final static String CONNECTION_POOL_SIZE = "connectionPoolSize";
 	
 	private final static Logger logger = LoggerFactory.getLogger(DynaliteJavaMain.class);
 	
@@ -246,6 +247,21 @@ class DynaliteJavaMain
 			config.setDbPerTable(true);
 		}
 		
+		if(cmdLine.hasOption(CONNECTION_POOL_SIZE))
+		{
+			String connectionPoolSizeStr = cmdLine.getOptionValue(CONNECTION_POOL_SIZE);
+			
+			try 
+			{
+				int connectionPoolSize = Integer.parseInt(connectionPoolSizeStr);
+				config.setConnectionPoolSize(connectionPoolSize);
+			} 
+			catch (Exception e) 
+			{
+				System.out.println("Error parsing connection pools size number: " + connectionPoolSizeStr);
+			}
+		}
+		
 		if (cmdLine.hasOption(DYNAMITE_COUNT_OPTION_STR))
 		{
 			String dynamiteCountStr = cmdLine.getOptionValue(DYNAMITE_COUNT_OPTION_STR);
@@ -280,6 +296,7 @@ class DynaliteJavaMain
 		}
 		
 		if ((jdbcEndpoint.startsWith("jdbc:h2:")) ||
+			(jdbcEndpoint.startsWith("jdbc:postgresql:")) ||
 			(jdbcEndpoint.startsWith("jdbc:mysql:")))
 		{
 			return true;
@@ -355,6 +372,12 @@ class DynaliteJavaMain
 				.type(Integer.class)
 				.desc("Enable dynamite")
 				.build();
+		Option connectionPoolsSizeOption = Option.builder(CONNECTION_POOL_SIZE)
+				.required(false)
+				.hasArg(true)
+				.type(Integer.class)
+				.desc("Connection pools size")
+				.build();		
 		Option tablesMappingPath = Option.builder(TABLES_MAPPING_PATH)
 				.required(false)
 				.hasArg(true)
@@ -372,6 +395,7 @@ class DynaliteJavaMain
 		options.addOption(skipDynaliteExtractionOption);
 		options.addOption(dynamiteOption);
 		options.addOption(dbPerTable);
+		options.addOption(connectionPoolsSizeOption);
 		options.addOption(tablesMappingPath);
 		
 		return options;
