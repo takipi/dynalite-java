@@ -280,7 +280,8 @@ class DynaliteJavaMain
 		}
 		
 		if ((jdbcEndpoint.startsWith("jdbc:h2:")) ||
-			(jdbcEndpoint.startsWith("jdbc:mysql:")))
+			(jdbcEndpoint.startsWith("jdbc:mysql:")) ||
+			(jdbcEndpoint.startsWith("jdbc:postgresql")))
 		{
 			return true;
 		}
