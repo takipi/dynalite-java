@@ -128,6 +128,10 @@ public class DynaliteJavaServer
 		{
 			registerDriver("com.mysql.cj.jdbc.Driver");
 		}
+		else if (config.getJdbcEndpoint().startsWith("jdbc:postgresql:"))
+		{
+			registerDriver("org.postgresql.Driver");
+		}
 		else
 		{
 			throw new IllegalStateException("Unsupported jdbc: " + config.getJdbcEndpoint());
