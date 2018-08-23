@@ -212,6 +212,14 @@ class DynaliteJavaMain
 			config.setUser(cmdLine.getOptionValue(USER_OPTION_STR));
 		}
 		
+		String dynaliteRdbmsPasswordEnv = System.getenv("DYNALITE_RDBMS_PASSWORD");
+		
+		if ((dynaliteRdbmsPasswordEnv != null) &&
+			!(dynaliteRdbmsPasswordEnv.isEmpty()))
+		{
+			config.setPassword(dynaliteRdbmsPasswordEnv);
+		}
+		
 		if (cmdLine.hasOption(PASSWORD_OPTION_STR))
 		{
 			config.setPassword(cmdLine.getOptionValue(PASSWORD_OPTION_STR));
