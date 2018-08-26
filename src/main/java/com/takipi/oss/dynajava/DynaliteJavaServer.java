@@ -120,6 +120,7 @@ public class DynaliteJavaServer
 	private String handleJDBCEndpoint() throws Exception
 	{
 		// To do: if we want to support other vendors aside h2/mysql, we need to improve this:
+		//
 		if (config.getJdbcEndpoint().startsWith("jdbc:h2:"))
 		{
 			registerDriver("org.h2.Driver");
@@ -131,6 +132,9 @@ public class DynaliteJavaServer
 		else if (config.getJdbcEndpoint().startsWith("jdbc:postgresql:"))
 		{
 			registerDriver("org.postgresql.Driver");
+			
+			PostgresInitializer.createDatabaseIfNotExist(config.getJdbcEndpoint(),
+				config.getUser(), config.getPassword());
 		}
 		else
 		{
