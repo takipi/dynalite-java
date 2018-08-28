@@ -2,6 +2,8 @@
 
 A wrapper to run dynalite from Java using Trireme
 
+https://github.com/apigee/trireme
+
 Build:
 `./gradlew build`
 
