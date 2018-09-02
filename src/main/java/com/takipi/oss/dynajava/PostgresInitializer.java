@@ -120,7 +120,7 @@ public class PostgresInitializer
 	
 	private static String getDbNameFromUrl(String jdbcUrl)
 	{
-		Pattern pattern = Pattern.compile("jdbc:postgresql:?:\\/\\/[^:]*:\\d+\\/([^?]+)(\\?[\\S]+)?");
+		Pattern pattern = Pattern.compile("jdbc:postgresql:?:\\/\\/[^?:/]*(:\\d+)?\\/([^?]+)(\\?[\\S]+)?");
 		
 		try
 		{
@@ -128,7 +128,7 @@ public class PostgresInitializer
 			
 			if (matcher.find())
 			{
-				return matcher.group(1);
+				return matcher.group(2);
 			}
 		}
 		catch (Exception e)
@@ -141,7 +141,7 @@ public class PostgresInitializer
 	
 	private static String getProtocolAndDomainFromUrl(String jdbcUrl)
 	{
-		Pattern pattern = Pattern.compile("(jdbc:postgresql:?://[^:]*:\\d+)/?(\\S+)?");
+		Pattern pattern = Pattern.compile("(jdbc:postgresql:?://[^:?/]*(:\\d+)?)/?(\\S+)?");
 		
 		try
 		{
