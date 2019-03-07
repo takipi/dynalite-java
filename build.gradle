@@ -14,6 +14,7 @@ buildscript {
 
 repositories {
 	jcenter()
+	mavenCentral()
 }
 
 dependencies {
@@ -26,7 +27,8 @@ dependencies {
 		"org.slf4j:slf4j-api:1.7.7",
 		"com.h2database:h2:1.4.196",
 		"mysql:mysql-connector-java:6.0.6",
-		"org.postgresql:postgresql:42.2.4"
+		"org.postgresql:postgresql:42.2.4",
+		"com.github.noraui:ojdbc8:12.2.0.1"
 	)
 }
 

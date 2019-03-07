@@ -30,10 +30,12 @@ class DynaliteJavaMain
 	public final static String TABLES_MAPPING_PATH = "tablesMappingPath";
 	public final static String DB_PER_TABLE = "dbPerTable";
 	public final static String CONNECTION_POOL_SIZE = "connectionPoolSize";
+	public final static String VERBOSE = "verbose";
+	public final static String SVERBOSE = "sVerbose";
 	
 	private final static Logger logger = LoggerFactory.getLogger(DynaliteJavaMain.class);
 	
-	public static void main(String[] args) throws Exception
+	public static void main(String[] args)
 	{
 		DynaliteJavaMain dynaliteJavaMain = new DynaliteJavaMain();
 		
@@ -59,7 +61,8 @@ class DynaliteJavaMain
 				{
 					File tempFile = Utils.createTempDirectory(("dynalite"));
 					targetDir = tempFile.getAbsolutePath();
-				} catch (IOException e)
+				}
+				catch (IOException e)
 				{
 					logger.error(e.getMessage());
 					logger.error("Cannot create scripts directory. Exiting");
@@ -115,6 +118,7 @@ class DynaliteJavaMain
 	private boolean extractDynaliteScriptZip(String dynaliteScriptDest)
 	{
 		InputStream dynaZipStream = this.getClass().getResourceAsStream(DynaliteJavaConfig.DYNALITE_SCRIPT_ZIP_PATH);
+		
 		return Utils.unzip(dynaZipStream, dynaliteScriptDest);
 	}
 
@@ -293,6 +297,16 @@ class DynaliteJavaMain
 			config.setTableNamesMappingFile(cmdLine.getOptionValue(TABLES_MAPPING_PATH));
 		}
 		
+		if (cmdLine.hasOption(VERBOSE))
+		{
+			config.setVerbose(cmdLine.getOptionValue(VERBOSE));
+		}
+		
+		if (cmdLine.hasOption(SVERBOSE))
+		{
+			config.setSverbose(cmdLine.getOptionValue(SVERBOSE));
+		}
+		
 		return config;
 	}
 	
@@ -305,7 +319,8 @@ class DynaliteJavaMain
 		
 		if ((jdbcEndpoint.startsWith("jdbc:h2:")) ||
 			(jdbcEndpoint.startsWith("jdbc:mysql:")) ||
-			(jdbcEndpoint.startsWith("jdbc:postgresql")))
+			(jdbcEndpoint.startsWith("jdbc:postgresql")) ||
+			(jdbcEndpoint.startsWith("jdbc:oracle")))
 		{
 			return true;
 		}
@@ -391,6 +406,16 @@ class DynaliteJavaMain
 				.hasArg(true)
 				.desc("Json path of table names mapping")
 				.build();
+		Option verbose = Option.builder(VERBOSE)
+				.required(false)
+				.hasArg(true)
+				.desc("Verbose mode TRACE/DEBUG/WARN")
+				.build();
+		Option sverbose = Option.builder(SVERBOSE)
+				.required(false)
+				.hasArg(true)
+				.desc("sVerbose mode TRACE/DEBUG/WARN")
+				.build();
 		
 		Options options = new Options();
 		options.addOption(helpOption);
@@ -405,6 +430,8 @@ class DynaliteJavaMain
 		options.addOption(dbPerTable);
 		options.addOption(connectionPoolsSizeOption);
 		options.addOption(tablesMappingPath);
+		options.addOption(verbose);
+		options.addOption(sverbose);
 		
 		return options;
 	}
