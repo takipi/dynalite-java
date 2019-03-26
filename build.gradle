@@ -28,8 +28,10 @@ dependencies {
 		"com.h2database:h2:1.4.196",
 		"mysql:mysql-connector-java:6.0.6",
 		"org.postgresql:postgresql:42.2.4",
-		"com.github.noraui:ojdbc8:12.2.0.1"
-	)
+		files([
+				"../libs/oracle/ojdbc8.jar"
+		])
+)
 }
 
 fatJar {
