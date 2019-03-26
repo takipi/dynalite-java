@@ -29,7 +29,7 @@ dependencies {
 		"mysql:mysql-connector-java:6.0.6",
 		"org.postgresql:postgresql:42.2.4",
 		files([
-				"../libs/oracle/ojdbc8.jar"
+				"libs/ojdbc8.jar"
 		])
 )
 }
