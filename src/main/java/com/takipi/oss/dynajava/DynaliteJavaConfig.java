@@ -22,6 +22,8 @@ public class DynaliteJavaConfig
 	private boolean dbPerTable;
 	private int connectionPoolSize;
 	private String tablesMappingPath;
+	private String verbose;
+	private String sverbose;
 
 	public DynaliteJavaConfig()
 	{
@@ -146,5 +148,25 @@ public class DynaliteJavaConfig
 	public int getConnectionPoolSize()
 	{
 		return connectionPoolSize;
+	}
+	
+ 	public String getVerbose()
+	{
+		return verbose;
+	}
+
+ 	public void setVerbose(String verbose)
+	{
+		this.verbose = verbose;
+	}
+
+ 	public String getSverbose()
+	{
+		return sverbose;
+	}
+
+ 	public void setSverbose(String sverbose)
+	{
+		this.sverbose = sverbose;
 	}
 }

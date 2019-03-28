@@ -1,8 +1,9 @@
-package com.takipi.oss.dynajava;
+	package com.takipi.oss.dynajava;
 
 import java.io.File;
 import java.sql.DriverManager;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -66,7 +67,7 @@ public class DynaliteJavaServer
 			"--tablesMappingPath", config.getTablesMappingPath()
 		};
 		
-		return executeNodeScript(DynaliteJavaConfig.DYNAMITE_PROXY_MAIN, args);
+		return executeNodeScript(DynaliteJavaConfig.DYNAMITE_PROXY_MAIN, addVerbose(args));
 	}
 	
 	private List<ScriptFuture> startDynamiteInstances(int portBase) throws Exception
@@ -84,7 +85,7 @@ public class DynaliteJavaServer
 				config.isDbPerTable() ? "--dbPerTable" : ""
 			};
 			
-			result.add(executeNodeScript(DynaliteJavaConfig.DYNALITE_MAIN, args));
+			result.add(executeNodeScript(DynaliteJavaConfig.DYNALITE_MAIN, addVerbose(args)));
 		}
 		
 		return result;
@@ -97,10 +98,9 @@ public class DynaliteJavaServer
 			"--jdbcUser", (config.getUser() == null ? "" : config.getUser()),
 			"--jdbcPassword", (config.getPassword() == null ? "" : config.getPassword()),
 			"--jdbc", config.getJdbcEndpoint(),
-			config.isDbPerTable() ? "--dbPerTable" : ""
-		};
-		
-		return executeNodeScript(DynaliteJavaConfig.DYNALITE_MAIN, args);
+			config.isDbPerTable() ? "--dbPerTable" : ""};
+			
+		return executeNodeScript(DynaliteJavaConfig.DYNALITE_MAIN, addVerbose(args));
 	}
 	
 	private ScriptFuture executeNodeScript(String scriptName, String[] args) throws Exception
@@ -159,5 +159,24 @@ public class DynaliteJavaServer
 		{
 			throw new IllegalStateException("You must run 'npm install' for: " + dynaliteScriptsDir.getAbsolutePath());
 		}
+	}
+	
+	private String[] addVerbose(String[] args)
+	{
+		List<String> argsList = new ArrayList<>(Arrays.asList(args));
+		
+		if (config.getVerbose() != null)
+		{
+			argsList.add("--verbose");
+			argsList.add(config.getVerbose());
+		}
+		
+		if (config.getSverbose() != null)
+		{
+			argsList.add("--sVerbose");
+			argsList.add(config.getSverbose());
+		}
+		
+		return argsList.toArray(new String[0]);
 	}
 }
