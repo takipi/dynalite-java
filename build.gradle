@@ -20,18 +20,19 @@ repositories {
 dependencies {
 	compile(
 		"commons-cli:commons-cli:1.4",
-		"io.apigee.trireme:trireme-node10src:0.9.0",
-		"io.apigee.trireme:trireme-core:0.9.0",
-		"io.apigee.trireme:trireme-kernel:0.9.0",
-		"io.apigee.trireme:trireme-jar:0.9.0",
-		"org.slf4j:slf4j-api:1.7.7",
+		"io.apigee.trireme:trireme-node10src:0.9.4",
+		"io.apigee.trireme:trireme-core:0.9.4",
+		"io.apigee.trireme:trireme-kernel:0.9.4",
+		"org.slf4j:slf4j-api:1.7.26",
+		"ch.qos.logback:logback-classic:1.2.3",
 		"com.h2database:h2:1.4.196",
 		"mysql:mysql-connector-java:6.0.6",
 		"org.postgresql:postgresql:42.2.4",
 		files([
-				"libs/ojdbc8.jar"
+				"libs/ojdbc8.jar",
+				"libs/takipi-trireme-util-0.9.5-SNAPSHOT.jar"
 		])
-)
+	)	
 }
 
 fatJar {
