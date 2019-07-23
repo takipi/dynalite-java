@@ -81,9 +81,7 @@ public class DynaliteJavaServer
 				"--jdbcPassword", (config.getPassword() == null ? "" : config.getPassword()),
 				"--jdbc", config.getJdbcEndpoint(),
 				"--connectionPoolMaxSize", Integer.toString(config.getConnectionPoolSize()),
-				config.isDbPerTable() ? "--dbPerTable" : "",
-				config.getVerbose() == null ? "" : "--verbose " + config.getVerbose(),
-				config.getSverbose() == null ? "" : "--sVerbose " + config.getSverbose()
+				config.isDbPerTable() ? "--dbPerTable" : ""
 			};
 			
 			result.add(executeNodeScript(DynaliteJavaConfig.DYNALITE_MAIN, args));
@@ -99,9 +97,7 @@ public class DynaliteJavaServer
 			"--jdbcUser", (config.getUser() == null ? "" : config.getUser()),
 			"--jdbcPassword", (config.getPassword() == null ? "" : config.getPassword()),
 			"--jdbc", config.getJdbcEndpoint(),
-			config.isDbPerTable() ? "--dbPerTable" : "",
-			config.getVerbose() == null ? "" : "--verbose " + config.getVerbose(),
-			config.getSverbose() == null ? "" : "--sVerbose " + config.getSverbose()
+			config.isDbPerTable() ? "--dbPerTable" : ""
 		};
 		
 		return executeNodeScript(DynaliteJavaConfig.DYNALITE_MAIN, args);
