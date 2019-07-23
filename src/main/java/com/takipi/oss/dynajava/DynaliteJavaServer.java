@@ -81,6 +81,8 @@ public class DynaliteJavaServer
 				"--jdbcPassword", (config.getPassword() == null ? "" : config.getPassword()),
 				"--jdbc", config.getJdbcEndpoint(),
 				"--connectionPoolMaxSize", Integer.toString(config.getConnectionPoolSize()),
+				config.getVerbose() == null ? "" : "--verbose " + config.getVerbose(),
+				config.getSverbose() == null ? "" : "--sVerbose " + config.getSverbose(),
 				config.isDbPerTable() ? "--dbPerTable" : ""
 			};
 			
@@ -97,6 +99,8 @@ public class DynaliteJavaServer
 			"--jdbcUser", (config.getUser() == null ? "" : config.getUser()),
 			"--jdbcPassword", (config.getPassword() == null ? "" : config.getPassword()),
 			"--jdbc", config.getJdbcEndpoint(),
+			config.getVerbose() == null ? "" : "--verbose " + config.getVerbose(),
+			config.getSverbose() == null ? "" : "--sVerbose " + config.getSverbose(),
 			config.isDbPerTable() ? "--dbPerTable" : ""
 		};
 		
@@ -135,6 +139,10 @@ public class DynaliteJavaServer
 			
 			PostgresInitializer.createDatabaseIfNotExist(config.getJdbcEndpoint(),
 				config.getUser(), config.getPassword());
+		}
+		else if (config.getJdbcEndpoint().startsWith("jdbc:oracle:"))
+		{
+			registerDriver("oracle.jdbc.OracleDriver");
 		}
 		else
 		{
